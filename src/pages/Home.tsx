@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/accordion";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Gallery } from "@/components/Gallery";
-import { Heart, Brain, TrendingUp, BookOpen, Users, Activity, ArrowRight, Star, Check } from "lucide-react";
+import { GalleryTestimonials } from "@/components/GalleryTestimonials";
+import { Heart, Brain, TrendingUp, BookOpen, Users, Activity, ArrowRight, Check } from "lucide-react";
 import heroImage from "@/assets/hero-students-pets.jpg";
 import therapyPetImage from "@/assets/therapy-pet.jpg";
 import counselingImage from "@/assets/counseling-session.jpg";
@@ -229,83 +229,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-              Students & Schools Love Happy Space World
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card className="border-border">
-                <CardContent className="p-6">
-                  <div className="flex mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-warning text-warning" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground mb-4 italic">
-                    "Happy Space World helped me manage my exam anxiety. The pet therapy sessions were so calming!"
-                  </p>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center mr-3">
-                      <span className="text-secondary font-semibold">A</span>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-foreground">Aarav</div>
-                      <div className="text-sm text-muted-foreground">Class 10</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border">
-                <CardContent className="p-6">
-                  <div className="flex mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-warning text-warning" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground mb-4 italic">
-                    "My stress levels went down by 60% after 4 weeks. The Stop, Look, Go model is life-changing!"
-                  </p>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center mr-3">
-                      <span className="text-tertiary font-semibold">P</span>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-foreground">Priya</div>
-                      <div className="text-sm text-muted-foreground">Class 9</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border">
-                <CardContent className="p-6">
-                  <div className="flex mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-warning text-warning" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground mb-4 italic">
-                    "As a principal, I saw visible improvements in student focus and mental health. Highly recommend!"
-                  </p>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                      <span className="text-primary font-semibold">DS</span>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-foreground">Dr. Sharma</div>
-                      <div className="text-sm text-muted-foreground">School Principal</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
         {/* FAQ Section */}
         <section id="faqs" className="py-20 bg-muted/30">
           <div className="container mx-auto px-4 max-w-3xl">
@@ -386,51 +309,67 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Gallery Section */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
-              Our Happy Moments
-            </h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Experience the joy and connection through our pet therapy sessions and counseling programs
-            </p>
-            <Gallery
-              images={[
-                {
-                  src: heroImage,
-                  alt: "Students enjoying pet therapy sessions",
-                  title: "Pet Therapy Sessions"
-                },
-                {
-                  src: therapyPetImage,
-                  alt: "Therapy animal bringing comfort",
-                  title: "Therapy Animals"
-                },
-                {
-                  src: counselingImage,
-                  alt: "Expert counseling sessions",
-                  title: "Expert Counseling"
-                },
-                {
-                  src: progressImage,
-                  alt: "Tracking student progress",
-                  title: "Progress Tracking"
-                },
-                {
-                  src: heroImage,
-                  alt: "Students building confidence",
-                  title: "Building Confidence"
-                },
-                {
-                  src: therapyPetImage,
-                  alt: "Creating connections",
-                  title: "Creating Connections"
-                }
-              ]}
-            />
-          </div>
-        </section>
+        {/* Gallery & Testimonials Combined Section */}
+        <GalleryTestimonials
+          images={[
+            {
+              src: heroImage,
+              alt: "Students enjoying pet therapy sessions",
+              title: "Pet Therapy Sessions"
+            },
+            {
+              src: therapyPetImage,
+              alt: "Therapy animal bringing comfort",
+              title: "Therapy Animals"
+            },
+            {
+              src: counselingImage,
+              alt: "Expert counseling sessions",
+              title: "Expert Counseling"
+            },
+            {
+              src: progressImage,
+              alt: "Tracking student progress",
+              title: "Progress Tracking"
+            },
+            {
+              src: heroImage,
+              alt: "Students building confidence",
+              title: "Building Confidence"
+            },
+            {
+              src: therapyPetImage,
+              alt: "Creating connections",
+              title: "Creating Connections"
+            }
+          ]}
+          testimonials={[
+            {
+              name: "Aarav",
+              role: "Class 10",
+              content: "Happy Space World helped me manage my exam anxiety. The pet therapy sessions were so calming!",
+              rating: 5,
+              initial: "A",
+              colorClass: "bg-secondary/10 text-secondary"
+            },
+            {
+              name: "Priya",
+              role: "Class 9",
+              content: "My stress levels went down by 60% after 4 weeks. The Stop, Look, Go model is life-changing!",
+              rating: 5,
+              initial: "P",
+              colorClass: "bg-tertiary/10 text-tertiary"
+            },
+            {
+              name: "Dr. Sharma",
+              role: "School Principal",
+              content: "As a principal, I saw visible improvements in student focus and mental health. Highly recommend!",
+              rating: 5,
+              initial: "DS",
+              colorClass: "bg-primary/10 text-primary"
+            }
+          ]}
+        />
       </main>
 
       <Footer />
