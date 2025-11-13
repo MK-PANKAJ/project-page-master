@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Happy Space Color System - Calming & Professional */
+    /* Happy Space World Color System - Warm & Welcoming */
     --background: 0 0% 98%;
     --foreground: 218 28% 15%;
 
@@ -18,22 +18,30 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 218 28% 15%;
 
-    /* Primary: Calming Teal - Main brand color */
-    --primary: 177 55% 40%;
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 177 55% 65%;
-    --primary-dark: 177 55% 30%;
+    /* Primary: Warm Orange/Amber - Main brand color */
+    --primary: 38 100% 72%;
+    --primary-foreground: 218 28% 15%;
+    --primary-light: 38 100% 83%;
+    --primary-dark: 38 100% 60%;
 
-    /* Secondary: Warm Coral - Pet warmth, connection */
-    --secondary: 13 100% 68%;
+    /* Secondary: Calming Teal - Pet therapy connection */
+    --secondary: 177 55% 45%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-light: 13 100% 80%;
-    --secondary-dark: 13 100% 55%;
+    --secondary-light: 177 55% 65%;
+    --secondary-dark: 177 55% 30%;
 
     /* Tertiary: Soft Lavender - Mindfulness, creativity */
     --tertiary: 262 50% 70%;
     --tertiary-foreground: 0 0% 100%;
     --tertiary-light: 262 50% 85%;
+
+    /* Brand Palette - Additional orange tones */
+    --amber: 40 100% 91%;
+    --amber-foreground: 218 28% 15%;
+    --xanthous: 39 100% 81%;
+    --xanthous-foreground: 218 28% 15%;
+    --sunglow: 41 100% 84%;
+    --sunglow-foreground: 218 28% 15%;
 
     /* Accent colors */
     --success: 142 71% 45%;
@@ -48,27 +56,27 @@ All colors MUST be HSL.
     --muted: 210 20% 96%;
     --muted-foreground: 215 15% 50%;
 
-    --accent: 262 50% 70%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 38 100% 72%;
+    --accent-foreground: 218 28% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 20% 88%;
     --input: 214 20% 88%;
-    --ring: 177 55% 40%;
+    --ring: 38 100% 72%;
 
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(177 55% 40%), hsl(177 55% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(13 100% 68%), hsl(13 100% 80%));
-    --gradient-hero: linear-gradient(135deg, hsl(177 55% 40% / 0.95), hsl(262 50% 70% / 0.85));
+    --gradient-primary: linear-gradient(135deg, hsl(38 100% 72%), hsl(38 100% 83%));
+    --gradient-secondary: linear-gradient(135deg, hsl(177 55% 45%), hsl(177 55% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(38 100% 72% / 0.95), hsl(177 55% 45% / 0.85));
     
     /* Shadows */
-    --shadow-soft: 0 4px 16px hsl(177 55% 40% / 0.1);
-    --shadow-medium: 0 8px 24px hsl(177 55% 40% / 0.15);
-    --shadow-strong: 0 12px 32px hsl(177 55% 40% / 0.2);
+    --shadow-soft: 0 4px 16px hsl(38 100% 72% / 0.15);
+    --shadow-medium: 0 8px 24px hsl(38 100% 72% / 0.2);
+    --shadow-strong: 0 12px 32px hsl(38 100% 72% / 0.25);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

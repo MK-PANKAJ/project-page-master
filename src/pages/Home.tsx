@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { Gallery } from "@/components/Gallery";
 import { Heart, Brain, TrendingUp, BookOpen, Users, Activity, ArrowRight, Star, Check } from "lucide-react";
 import heroImage from "@/assets/hero-students-pets.jpg";
 import therapyPetImage from "@/assets/therapy-pet.jpg";
@@ -101,7 +102,7 @@ const Home = () => {
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
-              Happy Space's Proven Three-Pillar Approach
+              Happy Space World's Proven Three-Pillar Approach
             </h2>
             <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
               A comprehensive program combining therapy, counseling, and progress tracking
@@ -232,7 +233,7 @@ const Home = () => {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-              Students & Schools Love Happy Space
+              Students & Schools Love Happy Space World
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -244,7 +245,7 @@ const Home = () => {
                     ))}
                   </div>
                   <p className="text-muted-foreground mb-4 italic">
-                    "Happy Space helped me manage my exam anxiety. The pet therapy sessions were so calming!"
+                    "Happy Space World helped me manage my exam anxiety. The pet therapy sessions were so calming!"
                   </p>
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center mr-3">
@@ -315,10 +316,10 @@ const Home = () => {
             <Accordion type="multiple" defaultValue={["item-1", "item-2", "item-3"]} className="space-y-4">
               <AccordionItem value="item-1" className="bg-card border border-border rounded-lg px-6">
                 <AccordionTrigger className="text-left hover:no-underline">
-                  What is Happy Space?
+                  What is Happy Space World?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Happy Space is a comprehensive mental wellness program for students in Classes 8-12, combining expert counseling, pet therapy, and progress tracking to help students manage stress, build confidence, and improve their overall wellbeing.
+                  Happy Space World is a comprehensive mental wellness program for students in Classes 8-12, combining expert counseling, pet therapy, and progress tracking to help students manage stress, build confidence, and improve their overall wellbeing.
                 </AccordionContent>
               </AccordionItem>
 
@@ -382,6 +383,52 @@ const Home = () => {
                 </Link>
               </Button>
             </div>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
+              Our Happy Moments
+            </h2>
+            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+              Experience the joy and connection through our pet therapy sessions and counseling programs
+            </p>
+            <Gallery
+              images={[
+                {
+                  src: heroImage,
+                  alt: "Students enjoying pet therapy sessions",
+                  title: "Pet Therapy Sessions"
+                },
+                {
+                  src: therapyPetImage,
+                  alt: "Therapy animal bringing comfort",
+                  title: "Therapy Animals"
+                },
+                {
+                  src: counselingImage,
+                  alt: "Expert counseling sessions",
+                  title: "Expert Counseling"
+                },
+                {
+                  src: progressImage,
+                  alt: "Tracking student progress",
+                  title: "Progress Tracking"
+                },
+                {
+                  src: heroImage,
+                  alt: "Students building confidence",
+                  title: "Building Confidence"
+                },
+                {
+                  src: therapyPetImage,
+                  alt: "Creating connections",
+                  title: "Creating Connections"
+                }
+              ]}
+            />
           </div>
         </section>
       </main>

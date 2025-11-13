@@ -18,7 +18,7 @@ const Schools = () => {
               Transform Your School's Mental Wellness
             </h1>
             <p className="text-xl mb-8 max-w-2xl mx-auto opacity-95">
-              Make your school a mental wellness pioneer with Happy Space certification and programs
+              Make your school a mental wellness pioneer with Happy Space World certification and programs
             </p>
             <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark">
               <Link to="/contact">Request School Demo</Link>
@@ -30,7 +30,7 @@ const Schools = () => {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-              Why Schools Choose Happy Space
+              Why Schools Choose Happy Space World
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -57,7 +57,7 @@ const Schools = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Earn Happy Space Certified School status with Gold, Silver, or Bronze tier recognition
+                    Earn Happy Space World Certified School status with Gold, Silver, or Bronze tier recognition
                   </p>
                 </CardContent>
               </Card>
@@ -128,7 +128,7 @@ const Schools = () => {
               Certification Pathway
             </h2>
             <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              A simple 5-step process to become a Happy Space Certified School
+              A simple 5-step process to become a Happy Space World Certified School
             </p>
             
             <div className="max-w-4xl mx-auto">
@@ -373,7 +373,7 @@ const Schools = () => {
                 <CardContent>
                   <div className="mb-4">
                     <div className="text-3xl font-bold text-primary mb-1">Gold Tier</div>
-                    <p className="text-sm text-muted-foreground">Certified Happy Space</p>
+                    <p className="text-sm text-muted-foreground">Certified Happy Space World</p>
                   </div>
                   <p className="text-sm text-muted-foreground italic">
                     "Best decision we made for our students' mental health."

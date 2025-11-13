@@ -36,6 +36,18 @@ export default {
           foreground: "hsl(var(--tertiary-foreground))",
           light: "hsl(var(--tertiary-light))",
         },
+        amber: {
+          DEFAULT: "hsl(var(--amber))",
+          foreground: "hsl(var(--amber-foreground))",
+        },
+        xanthous: {
+          DEFAULT: "hsl(var(--xanthous))",
+          foreground: "hsl(var(--xanthous-foreground))",
+        },
+        sunglow: {
+          DEFAULT: "hsl(var(--sunglow))",
+          foreground: "hsl(var(--sunglow-foreground))",
+        },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

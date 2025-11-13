@@ -10,6 +10,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import logo from "@/assets/logo.jpg";
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,9 +19,14 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-3">
+          <img 
+            src={logo} 
+            alt="Happy Space World Logo" 
+            className="h-10 w-10 object-contain rounded-full"
+          />
           <div className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Happy Space</span>
+            <span className="text-2xl font-bold text-primary">Happy Space World</span>
           </div>
         </Link>
 
@@ -95,7 +101,7 @@ export const Header = () => {
                         >
                           <div className="text-sm font-medium leading-none">Certification</div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Become a Happy Space Certified School
+                            Become a Happy Space World Certified School
                           </p>
                         </Link>
                       </NavigationMenuLink>

@@ -139,7 +139,7 @@ const Contact = () => {
                     <div className="flex items-start space-x-2">
                       <input type="checkbox" id="privacy" className="mt-1" required />
                       <Label htmlFor="privacy" className="text-sm text-muted-foreground cursor-pointer">
-                        I agree to the privacy policy and consent to Happy Space storing and processing my information
+                        I agree to the privacy policy and consent to Happy Space World storing and processing my information
                       </Label>
                     </div>
 

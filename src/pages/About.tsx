@@ -12,7 +12,7 @@ const About = () => {
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-br from-primary to-primary-light text-white">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">About Happy Space</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">About Happy Space World</h1>
             <p className="text-xl max-w-3xl mx-auto opacity-95">
               Empowering student mental wellness through innovative pet therapy and expert counseling
             </p>

@@ -236,7 +236,7 @@ const Students = () => {
               Ready to Start Your Journey?
             </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto opacity-95">
-              Join Happy Space today and discover a calmer, more confident you
+              Join Happy Space World today and discover a calmer, more confident you
             </p>
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
               <Link to="/contact#booking">Book Your First Session</Link>
