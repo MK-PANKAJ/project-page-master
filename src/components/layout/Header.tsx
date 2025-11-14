@@ -119,6 +119,22 @@ export const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
+                <Link to="/gallery">
+                  <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary focus:bg-muted focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    Gallery
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link to="/testimonials">
+                  <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary focus:bg-muted focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    Testimonials
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
                 <Link to="/contact">
                   <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary focus:bg-muted focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                     Contact
@@ -174,6 +190,20 @@ export const Header = () => {
               onClick={() => setMobileMenuOpen(false)}
             >
               About
+            </Link>
+            <Link
+              to="/gallery"
+              className="block py-2 text-foreground hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Gallery
+            </Link>
+            <Link
+              to="/testimonials"
+              className="block py-2 text-foreground hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Testimonials
             </Link>
             <Link
               to="/resources"

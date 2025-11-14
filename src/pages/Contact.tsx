@@ -12,9 +12,119 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Phone, Mail, Clock } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    inquiryType: "",
+    message: "",
+    privacyAccepted: false,
+  });
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.privacyAccepted) {
+      toast({
+        title: "Privacy Policy Required",
+        description: "Please accept the privacy policy to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        inquiry_type: formData.inquiryType,
+        message: formData.message,
+        privacy_accepted: formData.privacyAccepted,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you within 24-48 hours.",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        inquiryType: "",
+        message: "",
+        privacyAccepted: false,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleBooking = async (bookingType: "student" | "school") => {
+    if (!formData.name || !formData.email) {
+      toast({
+        title: "Information Required",
+        description: "Please fill in your name and email in the contact form above.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.from("booking_requests").insert({
+        booking_type: bookingType,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        message: formData.message || null,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking Request Received!",
+        description: "We'll contact you soon to schedule your session.",
+      });
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit booking request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -93,60 +203,92 @@ const Contact = () => {
 
               <Card className="border-border">
                 <CardContent className="p-8">
-                  <form className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name *</Label>
-                        <Input id="name" placeholder="Your name" required />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address *</Label>
-                        <Input id="email" type="email" placeholder="your@email.com" required />
-                      </div>
-                    </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name *</Label>
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      required
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john@example.com"
+                      required
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                    />
+                  </div>
+                </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number *</Label>
-                        <Input id="phone" type="tel" placeholder="Your phone number" required />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="category">Inquiry Type *</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select inquiry type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="student">Student Inquiry</SelectItem>
-                            <SelectItem value="school">School Partnership</SelectItem>
-                            <SelectItem value="general">General Question</SelectItem>
-                            <SelectItem value="feedback">Feedback</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="inquiry">Type of Inquiry *</Label>
+                    <Select
+                      required
+                      value={formData.inquiryType}
+                      onValueChange={(value) => handleInputChange("inquiryType", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select inquiry type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="student">Student Program</SelectItem>
+                        <SelectItem value="school">School Partnership</SelectItem>
+                        <SelectItem value="parent">Parent Inquiry</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message *</Label>
-                      <Textarea
-                        id="message"
-                        placeholder="Tell us how we can help you..."
-                        rows={6}
-                        required
-                      />
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message *</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Tell us how we can help you..."
+                    className="min-h-[120px]"
+                    required
+                    value={formData.message}
+                    onChange={(e) => handleInputChange("message", e.target.value)}
+                  />
+                </div>
 
-                    <div className="flex items-start space-x-2">
-                      <input type="checkbox" id="privacy" className="mt-1" required />
-                      <Label htmlFor="privacy" className="text-sm text-muted-foreground cursor-pointer">
-                        I agree to the privacy policy and consent to Happy Space World storing and processing my information
-                      </Label>
-                    </div>
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="privacy"
+                    checked={formData.privacyAccepted}
+                    onCheckedChange={(checked) =>
+                      handleInputChange("privacyAccepted", checked === true)
+                    }
+                    required
+                  />
+                  <Label htmlFor="privacy" className="text-sm text-muted-foreground cursor-pointer">
+                    I agree to the privacy policy and consent to being contacted by Happy Space World
+                  </Label>
+                </div>
 
-                    <Button type="submit" size="lg" className="w-full md:w-auto">
-                      Send Message
-                    </Button>
-                  </form>
+                <Button type="submit" size="lg" className="w-full md:w-auto" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </Button>
+              </form>
                 </CardContent>
               </Card>
             </div>
@@ -175,8 +317,12 @@ const Contact = () => {
                     <li>• Progress tracking dashboard</li>
                     <li>• Starting at ₹3,500</li>
                   </ul>
-                  <Button className="w-full bg-secondary hover:bg-secondary-dark">
-                    Book Student Session
+                  <Button
+                    className="w-full"
+                    onClick={() => handleBooking("student")}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing..." : "Book Student Session"}
                   </Button>
                 </CardContent>
               </Card>
@@ -195,8 +341,12 @@ const Contact = () => {
                     <li>• Comprehensive wellness reports</li>
                     <li>• Custom pricing available</li>
                   </ul>
-                  <Button className="w-full" variant="outline">
-                    Request School Demo
+                  <Button
+                    className="w-full"
+                    onClick={() => handleBooking("school")}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing..." : "Request School Demo"}
                   </Button>
                 </CardContent>
               </Card>

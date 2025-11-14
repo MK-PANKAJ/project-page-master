@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/accordion";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { GalleryTestimonials } from "@/components/GalleryTestimonials";
 import { Heart, Brain, TrendingUp, BookOpen, Users, Activity, ArrowRight, Check } from "lucide-react";
 import heroImage from "@/assets/hero-students-pets.jpg";
 import therapyPetImage from "@/assets/therapy-pet.jpg";
@@ -309,67 +308,43 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Gallery & Testimonials Combined Section */}
-        <GalleryTestimonials
-          images={[
-            {
-              src: heroImage,
-              alt: "Students enjoying pet therapy sessions",
-              title: "Pet Therapy Sessions"
-            },
-            {
-              src: therapyPetImage,
-              alt: "Therapy animal bringing comfort",
-              title: "Therapy Animals"
-            },
-            {
-              src: counselingImage,
-              alt: "Expert counseling sessions",
-              title: "Expert Counseling"
-            },
-            {
-              src: progressImage,
-              alt: "Tracking student progress",
-              title: "Progress Tracking"
-            },
-            {
-              src: heroImage,
-              alt: "Students building confidence",
-              title: "Building Confidence"
-            },
-            {
-              src: therapyPetImage,
-              alt: "Creating connections",
-              title: "Creating Connections"
-            }
-          ]}
-          testimonials={[
-            {
-              name: "Aarav",
-              role: "Class 10",
-              content: "Happy Space World helped me manage my exam anxiety. The pet therapy sessions were so calming!",
-              rating: 5,
-              initial: "A",
-              colorClass: "bg-secondary/10 text-secondary"
-            },
-            {
-              name: "Priya",
-              role: "Class 9",
-              content: "My stress levels went down by 60% after 4 weeks. The Stop, Look, Go model is life-changing!",
-              rating: 5,
-              initial: "P",
-              colorClass: "bg-tertiary/10 text-tertiary"
-            },
-            {
-              name: "Dr. Sharma",
-              role: "School Principal",
-              content: "As a principal, I saw visible improvements in student focus and mental health. Highly recommend!",
-              rating: 5,
-              initial: "DS",
-              colorClass: "bg-primary/10 text-primary"
-            }
-          ]}
-        />
+        {/* Quick Links to Gallery & Testimonials */}
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+                Our Happy Moments & Stories
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Explore our gallery and read testimonials from students, parents, and educators
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <Card className="hover:shadow-lg transition-all duration-300">
+                <CardContent className="pt-8 text-center">
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">Gallery</h3>
+                  <p className="text-muted-foreground mb-6">
+                    View photos from our programs and see the joy and transformation firsthand
+                  </p>
+                  <Button asChild variant="outline" size="lg">
+                    <Link to="/gallery">View Gallery</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              <Card className="hover:shadow-lg transition-all duration-300">
+                <CardContent className="pt-8 text-center">
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">Testimonials</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Read real stories from people who've experienced our programs
+                  </p>
+                  <Button asChild variant="outline" size="lg">
+                    <Link to="/testimonials">Read Testimonials</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
