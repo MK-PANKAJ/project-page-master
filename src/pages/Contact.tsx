@@ -1,22 +1,76 @@
+import { useState } from "react";
+import { z } from "zod";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Phone, Mail, Clock } from "lucide-react";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Phone, Mail, Clock } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+// Validation schemas
+const contactSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name contains invalid characters"),
+  email: z.string()
+    .trim()
+    .email("Invalid email address")
+    .max(255, "Email too long")
+    .toLowerCase(),
+  phone: z.string()
+    .trim()
+    .max(20, "Phone number too long")
+    .regex(/^[+]?[0-9\s()-]*$/, "Invalid phone format")
+    .optional()
+    .or(z.literal('')),
+  inquiryType: z.enum(['general', 'student', 'school', 'partnership'], {
+    errorMap: () => ({ message: "Please select a valid inquiry type" })
+  }),
+  message: z.string()
+    .trim()
+    .min(10, "Message must be at least 10 characters")
+    .max(2000, "Message must be less than 2000 characters"),
+  privacyAccepted: z.boolean()
+    .refine(val => val === true, "You must accept the privacy policy")
+});
+
+const bookingSchema = z.object({
+  bookingType: z.enum(['student', 'school']),
+  name: z.string()
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name contains invalid characters"),
+  email: z.string()
+    .trim()
+    .email("Invalid email address")
+    .max(255, "Email too long")
+    .toLowerCase(),
+  phone: z.string()
+    .trim()
+    .max(20, "Phone number too long")
+    .regex(/^[+]?[0-9\s()-]*$/, "Invalid phone format")
+    .optional()
+    .or(z.literal('')),
+  message: z.string()
+    .trim()
+    .max(2000, "Message must be less than 2000 characters")
+    .optional()
+    .or(z.literal('')),
+  organizationName: z.string()
+    .trim()
+    .max(200, "Organization name must be less than 200 characters")
+    .optional()
+    .or(z.literal(''))
+});
 
 const Contact = () => {
   const { toast } = useToast();
@@ -28,6 +82,7 @@ const Contact = () => {
     inquiryType: "",
     message: "",
     privacyAccepted: false,
+    organizationName: "",
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -40,7 +95,7 @@ const Contact = () => {
     if (!formData.privacyAccepted) {
       toast({
         title: "Privacy Policy Required",
-        description: "Please accept the privacy policy to continue.",
+        description: "Please accept our privacy policy to continue.",
         variant: "destructive",
       });
       return;
@@ -49,20 +104,23 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
+      // Validate input
+      const validated = contactSchema.parse(formData);
+
       const { error } = await supabase.from("contact_submissions").insert({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || null,
-        inquiry_type: formData.inquiryType,
-        message: formData.message,
-        privacy_accepted: formData.privacyAccepted,
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone || null,
+        inquiry_type: validated.inquiryType,
+        message: validated.message,
+        privacy_accepted: validated.privacyAccepted,
       });
 
       if (error) throw error;
 
       toast({
         title: "Message Sent!",
-        description: "We'll get back to you within 24-48 hours.",
+        description: "We've received your message and will get back to you within 24-48 hours.",
       });
 
       // Reset form
@@ -73,53 +131,81 @@ const Contact = () => {
         inquiryType: "",
         message: "",
         privacyAccepted: false,
+        organizationName: "",
       });
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "There was a problem sending your message. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleBooking = async (bookingType: "student" | "school") => {
-    if (!formData.name || !formData.email) {
-      toast({
-        title: "Information Required",
-        description: "Please fill in your name and email in the contact form above.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handleBooking = async (bookingType: 'student' | 'school') => {
     setIsSubmitting(true);
-
+    
     try {
-      const { error } = await supabase.from("booking_requests").insert({
-        booking_type: bookingType,
+      // Validate input
+      const validated = bookingSchema.parse({
+        bookingType,
         name: formData.name,
         email: formData.email,
-        phone: formData.phone || null,
-        message: formData.message || null,
+        phone: formData.phone,
+        message: formData.message,
+        organizationName: formData.organizationName
+      });
+
+      const { error } = await supabase.from("booking_requests").insert({
+        booking_type: validated.bookingType,
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone || null,
+        message: validated.message || null,
+        organization_name: validated.organizationName || null,
       });
 
       if (error) throw error;
 
       toast({
-        title: "Booking Request Received!",
-        description: "We'll contact you soon to schedule your session.",
+        title: "Booking Request Sent!",
+        description: "We've received your booking request and will contact you soon.",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        inquiryType: "",
+        message: "",
+        privacyAccepted: false,
+        organizationName: "",
       });
     } catch (error) {
-      console.error("Error submitting booking:", error);
-      toast({
-        title: "Error",
-        description: "Failed to submit booking request. Please try again.",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "There was a problem sending your booking request. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -131,57 +217,60 @@ const Contact = () => {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-tertiary text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Get in Touch</h1>
-            <p className="text-xl max-w-2xl mx-auto opacity-95">
-              Have questions? We're here to help you start your wellness journey
-            </p>
+        <section className="bg-gradient-to-b from-purple-50 to-white py-20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Get In Touch
+              </h1>
+              <p className="text-xl text-gray-600">
+                Have questions? We're here to help! Reach out to us anytime.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* Contact Info Cards */}
-        <section className="py-12 bg-background">
+        {/* Contact Information Cards */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto -mt-20 relative z-10">
-              <Card className="text-center shadow-lg">
-                <CardContent className="pt-8 pb-6">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Phone className="h-8 w-8 text-primary" />
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <Card className="text-center">
+                <CardHeader>
+                  <div className="mx-auto w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <Phone className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold mb-2 text-foreground">Call Us</h3>
-                  <a href="tel:8937915125" className="text-muted-foreground hover:text-primary transition-colors">
-                    8937915125
+                  <CardTitle>Phone</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <a href="tel:+12345678900" className="text-purple-600 hover:underline">
+                    (234) 567-8900
                   </a>
-                  <p className="text-sm text-muted-foreground mt-2">Mon-Sat, 9AM-6PM</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center shadow-lg">
-                <CardContent className="pt-8 pb-6">
-                  <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Mail className="h-8 w-8 text-secondary" />
+              <Card className="text-center">
+                <CardHeader>
+                  <div className="mx-auto w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <Mail className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold mb-2 text-foreground">Email Us</h3>
-                  <a 
-                    href="mailto:happyspaceworld@gmail.com" 
-                    className="text-muted-foreground hover:text-primary transition-colors text-sm break-all"
-                  >
-                    happyspaceworld@gmail.com
+                  <CardTitle>Email</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <a href="mailto:info@happyspaceworld.com" className="text-purple-600 hover:underline">
+                    info@happyspaceworld.com
                   </a>
-                  <p className="text-sm text-muted-foreground mt-2">24-48 hour response</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center shadow-lg">
-                <CardContent className="pt-8 pb-6">
-                  <div className="w-16 h-16 bg-tertiary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Clock className="h-8 w-8 text-tertiary" />
+              <Card className="text-center">
+                <CardHeader>
+                  <div className="mx-auto w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <Clock className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold mb-2 text-foreground">Office Hours</h3>
-                  <p className="text-muted-foreground text-sm">Monday - Friday</p>
-                  <p className="text-muted-foreground text-sm">9:00 AM - 6:00 PM</p>
-                  <p className="text-sm text-muted-foreground mt-2">Saturday: 10AM-4PM</p>
+                  <CardTitle>Hours</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Mon-Fri: 9AM-5PM EST</p>
                 </CardContent>
               </Card>
             </div>
@@ -189,164 +278,166 @@ const Contact = () => {
         </section>
 
         {/* Contact Form */}
-        <section id="booking" className="py-20 bg-muted/30">
+        <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
-                  Send Us a Message
-                </h2>
-                <p className="text-muted-foreground">
-                  Fill out the form below and we'll get back to you within 24 hours
-                </p>
-              </div>
+            <Card className="max-w-2xl mx-auto">
+              <CardHeader>
+                <CardTitle>Send Us a Message</CardTitle>
+                <CardDescription>
+                  Fill out the form below and we'll get back to you as soon as possible.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name *</Label>
+                      <Input
+                        id="name"
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange("name", e.target.value)}
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="john@example.com"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
 
-              <Card className="border-border">
-                <CardContent className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="(555) 123-4567"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="inquiryType">Inquiry Type *</Label>
+                      <Select
+                        value={formData.inquiryType}
+                        onValueChange={(value) => handleInputChange("inquiryType", value)}
+                        disabled={isSubmitting}
+                        required
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="general">General Inquiry</SelectItem>
+                          <SelectItem value="student">Student Services</SelectItem>
+                          <SelectItem value="school">School Partnership</SelectItem>
+                          <SelectItem value="partnership">Other Partnership</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input
-                      id="name"
-                      placeholder="John Doe"
+                    <Label htmlFor="message">Message *</Label>
+                    <Textarea
+                      id="message"
+                      placeholder="Tell us about your inquiry..."
+                      rows={5}
+                      value={formData.message}
+                      onChange={(e) => handleInputChange("message", e.target.value)}
                       required
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      disabled={isSubmitting}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="john@example.com"
-                      required
-                      value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
+
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="privacy"
+                      checked={formData.privacyAccepted}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("privacyAccepted", checked as boolean)
+                      }
+                      disabled={isSubmitting}
                     />
+                    <Label htmlFor="privacy" className="text-sm text-gray-600 leading-tight">
+                      I agree to the privacy policy and terms of service *
+                    </Label>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+91 98765 43210"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="inquiry">Type of Inquiry *</Label>
-                    <Select
-                      required
-                      value={formData.inquiryType}
-                      onValueChange={(value) => handleInputChange("inquiryType", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select inquiry type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="student">Student Program</SelectItem>
-                        <SelectItem value="school">School Partnership</SelectItem>
-                        <SelectItem value="parent">Parent Inquiry</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message *</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Tell us how we can help you..."
-                    className="min-h-[120px]"
-                    required
-                    value={formData.message}
-                    onChange={(e) => handleInputChange("message", e.target.value)}
-                  />
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <Checkbox
-                    id="privacy"
-                    checked={formData.privacyAccepted}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("privacyAccepted", checked === true)
-                    }
-                    required
-                  />
-                  <Label htmlFor="privacy" className="text-sm text-muted-foreground cursor-pointer">
-                    I agree to the privacy policy and consent to being contacted by Happy Space World
-                  </Label>
-                </div>
-
-                <Button type="submit" size="lg" className="w-full md:w-auto" disabled={isSubmitting}>
-                  {isSubmitting ? "Sending..." : "Send Message"}
-                </Button>
-              </form>
-                </CardContent>
-              </Card>
-            </div>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Send Message"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
-        {/* Booking Options */}
-        <section className="py-20 bg-background">
+        {/* Booking Sections */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-              Ready to Book?
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <Card className="border-2 border-secondary hover:shadow-xl transition-all duration-300">
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Student Booking */}
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl">I'm a Student</CardTitle>
+                  <CardTitle>I'm a Student</CardTitle>
+                  <CardDescription>
+                    Book your personal counseling or pet therapy session
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-6">
-                    Book individual counseling sessions or join group wellness programs
-                  </p>
-                  <ul className="space-y-2 mb-6 text-sm text-muted-foreground">
-                    <li>• 1-on-1 expert counseling</li>
-                    <li>• Pet therapy activities</li>
-                    <li>• Progress tracking dashboard</li>
-                    <li>• Starting at ₹3,500</li>
+                <CardContent className="space-y-4">
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li>✓ One-on-one counseling sessions</li>
+                    <li>✓ Pet therapy sessions with certified therapy animals</li>
+                    <li>✓ Flexible scheduling to fit your needs</li>
+                    <li>✓ Safe, confidential environment</li>
                   </ul>
                   <Button
                     className="w-full"
                     onClick={() => handleBooking("student")}
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Processing..." : "Book Student Session"}
+                    Book Student Session
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-primary hover:shadow-xl transition-all duration-300">
+              {/* School Booking */}
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl">I'm a School</CardTitle>
+                  <CardTitle>I'm a School</CardTitle>
+                  <CardDescription>
+                    Request information about our school programs
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-6">
-                    Request a demo and explore partnership options for your school
-                  </p>
-                  <ul className="space-y-2 mb-6 text-sm text-muted-foreground">
-                    <li>• Batch programs for 30+ students</li>
-                    <li>• School certification program</li>
-                    <li>• Comprehensive wellness reports</li>
-                    <li>• Custom pricing available</li>
+                <CardContent className="space-y-4">
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li>✓ On-campus counseling programs</li>
+                    <li>✓ Group pet therapy sessions</li>
+                    <li>✓ Professional development workshops</li>
+                    <li>✓ Customized wellness programs</li>
                   </ul>
                   <Button
                     className="w-full"
                     onClick={() => handleBooking("school")}
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Processing..." : "Request School Demo"}
+                    Get School Information
                   </Button>
                 </CardContent>
               </Card>
@@ -354,21 +445,19 @@ const Contact = () => {
           </div>
         </section>
 
-        {/* FAQ Quick Links */}
-        <section className="py-20 bg-muted/30">
+        {/* Additional Resources */}
+        <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-6 text-foreground">
-              Have Questions First?
-            </h2>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Check out our frequently asked questions or explore our resources
+            <h2 className="text-3xl font-bold mb-4">Need More Information?</h2>
+            <p className="text-gray-600 mb-8">
+              Check out our resources page for FAQs and helpful guides
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild variant="outline" size="lg">
-                <a href="/#faqs">View FAQs</a>
+            <div className="flex justify-center gap-4">
+              <Button variant="outline" asChild>
+                <a href="/resources">View Resources</a>
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <a href="/resources">Browse Resources</a>
+              <Button asChild>
+                <a href="/about">Learn More About Us</a>
               </Button>
             </div>
           </div>
