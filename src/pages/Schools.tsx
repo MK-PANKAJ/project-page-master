@@ -20,7 +20,7 @@ const Schools = () => {
             <p className="text-xl mb-8 max-w-2xl mx-auto opacity-95">
               Make your school a mental wellness pioneer with Happy Space World certification and programs
             </p>
-            <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark">
+            <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold shadow-lg">
               <Link to="/contact">Request School Demo</Link>
             </Button>
           </div>

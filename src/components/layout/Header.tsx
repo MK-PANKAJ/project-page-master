@@ -19,15 +19,15 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-2 group">
           <img 
             src={logo} 
             alt="Happy Space World Logo" 
-            className="h-10 w-10 object-contain rounded-full"
+            className="h-12 w-12 object-cover rounded-lg shadow-sm transition-transform group-hover:scale-105"
           />
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Happy Space World</span>
-          </div>
+          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary via-tertiary to-secondary bg-clip-text text-transparent">
+            Happy Space World
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

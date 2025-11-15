@@ -41,10 +41,10 @@ const Home = () => {
               Expert Counseling Backed by Sivaram Raghavan's Stop, Look, Go Model
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark text-lg px-8 py-6">
+              <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 font-semibold shadow-xl">
                 <Link to="/contact#booking">Start Your Happy Journey</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="text-lg px-8 py-6 bg-white/10 backdrop-blur border-white text-white hover:bg-white/20">
+              <Button asChild size="lg" className="text-lg px-8 py-6 bg-white/10 backdrop-blur border-2 border-white text-white hover:bg-white hover:text-primary font-semibold shadow-xl transition-all">
                 <Link to="/schools">For Schools: Learn More</Link>
               </Button>
             </div>
