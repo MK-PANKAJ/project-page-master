@@ -118,6 +118,16 @@ const Contact = () => {
 
       if (error) throw error;
 
+      // Send notification email
+      const { error: emailError } = await supabase.functions.invoke(
+        'send-notification-email',
+        { body: { type: 'contact', data: validated } }
+      );
+      
+      if (emailError) {
+        console.error('Failed to send notification email:', emailError);
+      }
+
       toast({
         title: "Message Sent!",
         description: "We've received your message and will get back to you within 24-48 hours.",
@@ -176,6 +186,16 @@ const Contact = () => {
       });
 
       if (error) throw error;
+
+      // Send notification email
+      const { error: emailError } = await supabase.functions.invoke(
+        'send-notification-email',
+        { body: { type: 'booking', data: { ...validated, booking_type: bookingType } } }
+      );
+      
+      if (emailError) {
+        console.error('Failed to send notification email:', emailError);
+      }
 
       toast({
         title: "Booking Request Sent!",

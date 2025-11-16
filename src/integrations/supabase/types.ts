@@ -86,6 +86,123 @@ export type Database = {
         }
         Relationships: []
       }
+      plans: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          duration_weeks: number | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          name: string
+          plan_type: string
+          price: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          duration_weeks?: number | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          plan_type: string
+          price?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          duration_weeks?: number | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          plan_type?: string
+          price?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      resources: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          downloads: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          downloads?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          downloads?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          name: string
+          rating: number | null
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          name: string
+          rating?: number | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          name?: string
+          rating?: number | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
