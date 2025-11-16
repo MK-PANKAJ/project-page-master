@@ -79,11 +79,11 @@ export const Header = () => {
           </NavigationMenu>
           <div className="flex items-center gap-2">
             {user ? (
-              <Button onClick={handleSignOut} variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white">Sign Out</Button>
+              <Button onClick={handleSignOut} variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Sign Out</Button>
             ) : (
-              <Link to="/auth"><Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white">Sign In</Button></Link>
+              <Link to="/auth"><Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Sign In</Button></Link>
             )}
-            <Link to="/contact"><Button className="bg-[#9b87f5] hover:bg-[#7E69AB]">Get Info</Button></Link>
+            <Link to="/contact"><Button className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold">Book Session</Button></Link>
           </div>
         </div>
 
@@ -103,11 +103,11 @@ export const Header = () => {
             <Link to="/gallery" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Gallery</Link>
             <Link to="/testimonials" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Testimonials</Link>
             {user ? (
-              <Button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} variant="outline" className="w-full border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white">Sign Out</Button>
+              <Button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} variant="outline" className="w-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Sign Out</Button>
             ) : (
-              <Link to="/auth"><Button variant="outline" className="w-full border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white" onClick={() => setMobileMenuOpen(false)}>Sign In</Button></Link>
+              <Link to="/auth"><Button variant="outline" className="w-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground" onClick={() => setMobileMenuOpen(false)}>Sign In</Button></Link>
             )}
-            <Link to="/contact"><Button className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]" onClick={() => setMobileMenuOpen(false)}>Get Info</Button></Link>
+            <Link to="/contact"><Button className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-semibold" onClick={() => setMobileMenuOpen(false)}>Book Session</Button></Link>
           </nav>
         </div>
       )}

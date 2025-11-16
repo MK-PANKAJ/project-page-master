@@ -25,9 +25,9 @@ export default function Auth() {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Redirect to home if authenticated
+        // Redirect to admin if authenticated
         if (session?.user) {
-          navigate("/");
+          navigate("/admin");
         }
       }
     );
@@ -37,9 +37,9 @@ export default function Auth() {
       setSession(session);
       setUser(session?.user ?? null);
       
-      // Redirect to home if already authenticated
+      // Redirect to admin if already authenticated
       if (session?.user) {
-        navigate("/");
+        navigate("/admin");
       }
     });
 
