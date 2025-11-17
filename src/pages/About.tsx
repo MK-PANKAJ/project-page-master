@@ -1,7 +1,9 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Heart, Brain, Award } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const About = () => {
   return (
@@ -210,12 +212,9 @@ const About = () => {
             <p className="text-xl mb-8 max-w-2xl mx-auto opacity-95">
               We'd love to tell you more about our programs and answer any questions
             </p>
-            <a
-              href="mailto:happyspaceworld@gmail.com"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:bg-white/90 transition-colors"
-            >
-              Contact Us
-            </a>
+            <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold">
+              <Link to="/contact">Contact Us</Link>
+            </Button>
           </div>
         </section>
       </main>

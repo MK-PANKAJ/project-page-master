@@ -27,10 +27,9 @@ const contactSchema = z.object({
     .toLowerCase(),
   phone: z.string()
     .trim()
+    .min(1, "Phone number is required")
     .max(20, "Phone number too long")
-    .regex(/^[+]?[0-9\s()-]*$/, "Invalid phone format")
-    .optional()
-    .or(z.literal('')),
+    .regex(/^[+]?[0-9\s()-]+$/, "Invalid phone format"),
   inquiryType: z.enum(['general', 'student', 'school', 'partnership'], {
     errorMap: () => ({ message: "Please select a valid inquiry type" })
   }),
@@ -56,10 +55,9 @@ const bookingSchema = z.object({
     .toLowerCase(),
   phone: z.string()
     .trim()
+    .min(1, "Phone number is required")
     .max(20, "Phone number too long")
-    .regex(/^[+]?[0-9\s()-]*$/, "Invalid phone format")
-    .optional()
-    .or(z.literal('')),
+    .regex(/^[+]?[0-9\s()-]+$/, "Invalid phone format"),
   message: z.string()
     .trim()
     .max(2000, "Message must be less than 2000 characters")
@@ -465,23 +463,6 @@ const Contact = () => {
           </div>
         </section>
 
-        {/* Additional Resources */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Need More Information?</h2>
-            <p className="text-gray-600 mb-8">
-              Check out our resources page for FAQs and helpful guides
-            </p>
-            <div className="flex justify-center gap-4">
-              <Button variant="outline" asChild>
-                <a href="/resources">View Resources</a>
-              </Button>
-              <Button asChild>
-                <a href="/about">Learn More About Us</a>
-              </Button>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />
