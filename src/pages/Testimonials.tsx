@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface Testimonial {
   name: string;
@@ -169,7 +170,10 @@ const Testimonials = () => {
               Join hundreds of students who have transformed their lives with our programs
             </p>
             <Button asChild size="lg">
-              <a href="/contact#booking">Get Started Today</a>
+              <Link to="/contact">Get Started Today</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="ml-4">
+              <Link to="/contact">Book Your Session</Link>
             </Button>
           </div>
         </section>

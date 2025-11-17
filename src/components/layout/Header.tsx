@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,36 +10,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { supabase } from "@/integrations/supabase/client";
-import { User, Session } from "@supabase/supabase-js";
 import logo from "@/assets/logo.jpg";
 
 export const Header = () => {
-  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -78,11 +52,6 @@ export const Header = () => {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-2">
-            {user ? (
-              <Button onClick={handleSignOut} variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Sign Out</Button>
-            ) : (
-              <Link to="/auth"><Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Sign In</Button></Link>
-            )}
             <Link to="/contact"><Button className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold">Book Session</Button></Link>
           </div>
         </div>
@@ -102,11 +71,6 @@ export const Header = () => {
             <Link to="/resources" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
             <Link to="/gallery" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Gallery</Link>
             <Link to="/testimonials" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Testimonials</Link>
-            {user ? (
-              <Button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} variant="outline" className="w-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Sign Out</Button>
-            ) : (
-              <Link to="/auth"><Button variant="outline" className="w-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground" onClick={() => setMobileMenuOpen(false)}>Sign In</Button></Link>
-            )}
             <Link to="/contact"><Button className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-semibold" onClick={() => setMobileMenuOpen(false)}>Book Session</Button></Link>
           </nav>
         </div>
