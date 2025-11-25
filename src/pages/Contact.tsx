@@ -260,8 +260,8 @@ const Contact = () => {
                   <CardTitle>Phone</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <a href="tel:+12345678900" className="text-purple-600 hover:underline">
-                    (234) 567-8900
+                  <a href="tel:+918937915125" className="text-purple-600 hover:underline">
+                    +918937915125
                   </a>
                 </CardContent>
               </Card>
@@ -274,8 +274,8 @@ const Contact = () => {
                   <CardTitle>Email</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <a href="mailto:info@happyspaceworld.com" className="text-purple-600 hover:underline">
-                    info@happyspaceworld.com
+                  <a href="mailto:happyspaceschool@gmail.com" className="text-purple-600 hover:underline">
+                    happyspaceschool@gmail.com
                   </a>
                 </CardContent>
               </Card>
@@ -288,7 +288,7 @@ const Contact = () => {
                   <CardTitle>Hours</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">Mon-Fri: 9AM-5PM EST</p>
+                  <p className="text-purple-600 hover:underline">Mon-Fri: 9AM-5PM EST</p>
                 </CardContent>
               </Card>
             </div>
