@@ -288,7 +288,7 @@ const Contact = () => {
                   <CardTitle>Hours</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-yellow-600">Mon-Fri: 9AM-5PM EST</p>
+                  <p className="text-purple-600">Mon-Fri: 9AM-5PM EST</p>
                 </CardContent>
               </Card>
             </div>
