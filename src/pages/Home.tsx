@@ -295,7 +295,7 @@ const Home = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-white text-secondary hover:bg-white/90 text-lg px-8 py-6">
-                <Link to="/contact#booking">
+                <Link to="/students">
                   I'm a Student – Start Now <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
