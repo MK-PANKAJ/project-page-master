@@ -19,7 +19,7 @@ import progressImage from "@/assets/progress-tracking.jpg";
 const Home = () => {
   return (
     <>
-      <SEOHead />
+      <SEOHead preloadImage={heroImage} />
       <div className="min-h-screen flex flex-col">
         <Header />
       
