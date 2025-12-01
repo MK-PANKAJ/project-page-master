@@ -61,7 +61,7 @@ const Schools = () => {
               Make your school a mental wellness pioneer with Happy Space World certification and programs
             </p>
             <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark">
-              <Link to="/contact?type=school&source=demo">Request School Demo</Link>
+              <Link to="/contact?type=school&source=demo#contact-form">Request School Demo</Link>
             </Button>
           </div>
         </section>
@@ -302,7 +302,7 @@ const Schools = () => {
                           className={isRecommended ? "w-full bg-secondary hover:bg-secondary-dark" : "w-full"}
                         >
                           <Link 
-                            to={`/contact?type=school&source=${plan.price && plan.price > 0 ? 'pricing' : 'quote'}${plan.contact_message ? '&planId=' + plan.id : ''}`}
+                            to={`/contact?type=school&source=${plan.price && plan.price > 0 ? 'pricing' : 'quote'}${plan.contact_message ? '&planId=' + plan.id : ''}#contact-form`}
                           >
                             {plan.price && plan.price > 0 ? `Choose ${plan.name.split(' ')[0]}` : 'Request Quote'}
                           </Link>
@@ -397,7 +397,7 @@ const Schools = () => {
               Join leading schools in prioritizing student mental wellness
             </p>
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-              <Link to="/contact">Request a Demo</Link>
+              <Link to="/contact?type=school&source=cta#contact-form">Request a Demo</Link>
             </Button>
           </div>
         </section>
