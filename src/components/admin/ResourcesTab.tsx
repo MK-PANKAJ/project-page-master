@@ -8,10 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Download } from "lucide-react";
+import { Plus, Trash2, Download, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { FileUpload } from "./FileUpload";
 import { ImageUpload } from "./ImageUpload";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Resource {
   id: string;
@@ -30,6 +31,8 @@ export function ResourcesTab() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [fileSourceTab, setFileSourceTab] = useState<"upload" | "link">("upload");
+  const [googleDriveLink, setGoogleDriveLink] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -68,10 +71,13 @@ export function ResourcesTab() {
     e.preventDefault();
     
     try {
+      // Use Google Drive link if that's the selected option
+      const fileUrl = fileSourceTab === "link" ? googleDriveLink : formData.file_url;
+      
       if (editingId) {
         const { error } = await supabase
           .from('resources')
-          .update(formData)
+          .update({ ...formData, file_url: fileUrl })
           .eq('id', editingId);
 
         if (error) throw error;
@@ -79,7 +85,7 @@ export function ResourcesTab() {
       } else {
         const { error } = await supabase
           .from('resources')
-          .insert([formData]);
+          .insert([{ ...formData, file_url: fileUrl }]);
 
         if (error) throw error;
         toast({ title: "Success", description: "Resource added" });
@@ -88,6 +94,8 @@ export function ResourcesTab() {
       setDialogOpen(false);
       setEditingId(null);
       setFormData({ title: "", description: "", category: "worksheet", file_url: null, thumbnail_url: null, is_active: true });
+      setGoogleDriveLink("");
+      setFileSourceTab("upload");
       fetchResources();
     } catch (error: any) {
       toast({
@@ -129,6 +137,16 @@ export function ResourcesTab() {
       thumbnail_url: resource.thumbnail_url,
       is_active: resource.is_active,
     });
+    
+    // Determine if it's a Google Drive link or uploaded file
+    if (resource.file_url && (resource.file_url.includes('drive.google.com') || resource.file_url.includes('docs.google.com'))) {
+      setFileSourceTab("link");
+      setGoogleDriveLink(resource.file_url);
+    } else {
+      setFileSourceTab("upload");
+      setGoogleDriveLink("");
+    }
+    
     setDialogOpen(true);
   };
 
@@ -145,6 +163,8 @@ export function ResourcesTab() {
             <Button onClick={() => {
               setEditingId(null);
               setFormData({ title: "", description: "", category: "worksheet", file_url: null, thumbnail_url: null, is_active: true });
+              setGoogleDriveLink("");
+              setFileSourceTab("upload");
             }}>
               <Plus className="mr-2 h-4 w-4" />
               Add Resource
@@ -200,15 +220,43 @@ export function ResourcesTab() {
                 onRemove={() => setFormData({ ...formData, thumbnail_url: null })}
                 label="Thumbnail Image (Optional)"
               />
-              <FileUpload
-                bucket="resource-files"
-                currentUrl={formData.file_url}
-                onUploadComplete={(url) => setFormData({ ...formData, file_url: url })}
-                onRemove={() => setFormData({ ...formData, file_url: null })}
-                label="Resource File"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip"
-                maxSizeMB={10}
-              />
+              
+              <div>
+                <Label>Resource File</Label>
+                <Tabs value={fileSourceTab} onValueChange={(v) => setFileSourceTab(v as "upload" | "link")} className="mt-2">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="upload">Upload File</TabsTrigger>
+                    <TabsTrigger value="link">
+                      <LinkIcon className="h-4 w-4 mr-2" />
+                      Google Drive Link
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="upload" className="mt-4">
+                    <FileUpload
+                      bucket="resource-files"
+                      currentUrl={formData.file_url}
+                      onUploadComplete={(url) => setFormData({ ...formData, file_url: url })}
+                      onRemove={() => setFormData({ ...formData, file_url: null })}
+                      label=""
+                      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip"
+                      maxSizeMB={10}
+                    />
+                  </TabsContent>
+                  <TabsContent value="link" className="mt-4">
+                    <div className="space-y-2">
+                      <Input
+                        placeholder="https://drive.google.com/file/d/..."
+                        value={googleDriveLink}
+                        onChange={(e) => setGoogleDriveLink(e.target.value)}
+                        type="url"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Paste a shareable Google Drive link. Make sure the link allows "Anyone with the link" to view.
+                      </p>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
