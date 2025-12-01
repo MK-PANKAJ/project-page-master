@@ -21,6 +21,7 @@ interface Plan {
   plan_type: string;
   is_active: boolean;
   display_order: number;
+  contact_message: string | null;
   created_at: string;
 }
 
@@ -38,6 +39,7 @@ export function PlansTab() {
     plan_type: "student" as const,
     is_active: true,
     display_order: 0,
+    contact_message: "",
   });
   const { toast } = useToast();
 
@@ -106,7 +108,7 @@ export function PlansTab() {
 
       setDialogOpen(false);
       setEditingId(null);
-      setFormData({ name: "", description: "", price: 0, duration_weeks: 4, features: "", plan_type: "student", is_active: true, display_order: 0 });
+      setFormData({ name: "", description: "", price: 0, duration_weeks: 4, features: "", plan_type: "student", is_active: true, display_order: 0, contact_message: "" });
       fetchPlans();
     } catch (error: any) {
       toast({
@@ -149,6 +151,7 @@ export function PlansTab() {
       plan_type: plan.plan_type as any,
       is_active: plan.is_active,
       display_order: plan.display_order,
+      contact_message: plan.contact_message || "",
     });
     setDialogOpen(true);
   };
@@ -165,7 +168,7 @@ export function PlansTab() {
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingId(null);
-              setFormData({ name: "", description: "", price: 0, duration_weeks: 4, features: "", plan_type: "student", is_active: true, display_order: 0 });
+              setFormData({ name: "", description: "", price: 0, duration_weeks: 4, features: "", plan_type: "student", is_active: true, display_order: 0, contact_message: "" });
             }}>
               <Plus className="mr-2 h-4 w-4" />
               Add Plan
@@ -238,6 +241,19 @@ export function PlansTab() {
                   rows={6}
                   placeholder="Weekly counseling sessions&#10;Pet therapy access&#10;Progress tracking"
                 />
+              </div>
+              <div>
+                <Label htmlFor="contact_message">Contact Form Message (Optional)</Label>
+                <Textarea
+                  id="contact_message"
+                  value={formData.contact_message}
+                  onChange={(e) => setFormData({ ...formData, contact_message: e.target.value })}
+                  rows={3}
+                  placeholder="Custom message that will appear in the contact form when users click to book this plan..."
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  This message will pre-fill the contact form when students/schools click to book this plan
+                </p>
               </div>
               <div>
                 <Label htmlFor="display_order">Display Order</Label>

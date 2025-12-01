@@ -15,6 +15,7 @@ interface Plan {
   description: string | null;
   price: number | null;
   features: string[] | any;
+  contact_message: string | null;
 }
 
 const Students = () => {
@@ -257,7 +258,11 @@ const Students = () => {
                     ))}
                   </ul>
                   <Button asChild className="w-full" size="lg">
-                    <Link to="/contact?type=student&source=booking">Get Started Today</Link>
+                    <Link 
+                      to={`/contact?type=student&source=plan${plan.contact_message ? '&planId=' + plan.id : ''}`}
+                    >
+                      Get Started Today
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -266,7 +271,7 @@ const Students = () => {
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">No pricing plan available. Please contact us for details.</p>
                   <Button asChild className="mt-4">
-                    <Link to="/contact">Contact Us</Link>
+                    <Link to="/contact?type=student">Contact Us</Link>
                   </Button>
                 </CardContent>
               </Card>

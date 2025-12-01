@@ -16,6 +16,7 @@ interface Plan {
   price: number | null;
   features: string[] | any;
   display_order: number | null;
+  contact_message: string | null;
 }
 
 const Schools = () => {
@@ -308,7 +309,9 @@ const Schools = () => {
                           variant={isRecommended ? "default" : "outline"} 
                           className={isRecommended ? "w-full bg-secondary hover:bg-secondary-dark" : "w-full"}
                         >
-                          <Link to={`/contact?type=school&source=${plan.price && plan.price > 0 ? 'pricing' : 'quote'}`}>
+                          <Link 
+                            to={`/contact?type=school&source=${plan.price && plan.price > 0 ? 'pricing' : 'quote'}${plan.contact_message ? '&planId=' + plan.id : ''}`}
+                          >
                             {plan.price && plan.price > 0 ? `Choose ${plan.name.split(' ')[0]}` : 'Request Quote'}
                           </Link>
                         </Button>
