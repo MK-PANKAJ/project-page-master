@@ -17,6 +17,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -51,7 +52,19 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth`,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Reset email sent!",
+          description: "Check your email for a password reset link.",
+        });
+        setIsForgotPassword(false);
+      } else if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -94,11 +107,15 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isLogin ? "Welcome Back" : "Create Account"}</CardTitle>
+          <CardTitle>
+            {isForgotPassword ? "Reset Password" : isLogin ? "Welcome Back" : "Create Account"}
+          </CardTitle>
           <CardDescription>
-            {isLogin 
-              ? "Sign in to access your admin dashboard" 
-              : "Sign up to get started with Happy Space World"}
+            {isForgotPassword
+              ? "Enter your email to receive a password reset link"
+              : isLogin 
+                ? "Sign in to access your admin dashboard" 
+                : "Sign up to get started with Happy Space World"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -115,32 +132,55 @@ export default function Auth() {
                 disabled={isLoading}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading}
-                minLength={6}
-              />
-            </div>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  minLength={6}
+                />
+              </div>
+            )}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
+              {isLoading ? "Loading..." : isForgotPassword ? "Send Reset Link" : isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline"
-              disabled={isLoading}
-            >
-              {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
-            </button>
+          <div className="mt-4 text-center text-sm space-y-2">
+            {!isForgotPassword && isLogin && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotPassword(true)}
+                  className="text-primary hover:underline"
+                  disabled={isLoading}
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsForgotPassword(false);
+                  setIsLogin(!isLogin);
+                }}
+                className="text-primary hover:underline"
+                disabled={isLoading}
+              >
+                {isForgotPassword 
+                  ? "Back to sign in"
+                  : isLogin 
+                    ? "Need an account? Sign up" 
+                    : "Already have an account? Sign in"}
+              </button>
+            </div>
           </div>
         </CardContent>
       </Card>
