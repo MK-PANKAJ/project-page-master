@@ -90,6 +90,7 @@ const Contact = () => {
   useEffect(() => {
     const type = searchParams.get('type');
     const source = searchParams.get('source');
+    const planId = searchParams.get('planId');
     
     if (type) {
       setFormData(prev => ({
@@ -98,22 +99,47 @@ const Contact = () => {
       }));
     }
     
-    if (source && type) {
-      const messages: Record<string, string> = {
-        'student-booking': 'I would like to book a student counseling session.',
-        'school-demo': 'I would like to request a demo of your school programs.',
-        'school-pricing': 'I would like more information about school program pricing.',
-        'resources': 'I have a question about your resources.',
-        'testimonials': 'I would like to share my experience or ask about testimonials.',
-      };
-      
-      const messageKey = `${type}-${source}`;
-      const message = messages[messageKey] || messages[source] || '';
-      
-      if (message) {
-        setFormData(prev => ({ ...prev, message }));
+    // Fetch custom message from plan if planId is provided
+    const fetchPlanMessage = async () => {
+      if (planId) {
+        try {
+          const { data, error } = await supabase
+            .from('plans')
+            .select('contact_message')
+            .eq('id', planId)
+            .maybeSingle();
+          
+          if (!error && data?.contact_message) {
+            setFormData(prev => ({ ...prev, message: data.contact_message }));
+            return;
+          }
+        } catch (error) {
+          console.error('Error fetching plan message:', error);
+        }
       }
-    }
+      
+      // Fall back to default messages if no custom message
+      if (source && type) {
+        const messages: Record<string, string> = {
+          'student-booking': 'I would like to book a student counseling session.',
+          'student-plan': 'I would like to enroll in your student wellness program.',
+          'school-demo': 'I would like to request a demo of your school programs.',
+          'school-pricing': 'I would like more information about school program pricing.',
+          'school-quote': 'I would like to request a custom quote for my school.',
+          'resources': 'I have a question about your resources.',
+          'testimonials': 'I would like to share my experience or ask about testimonials.',
+        };
+        
+        const messageKey = `${type}-${source}`;
+        const message = messages[messageKey] || messages[source] || '';
+        
+        if (message) {
+          setFormData(prev => ({ ...prev, message }));
+        }
+      }
+    };
+    
+    fetchPlanMessage();
   }, [searchParams]);
 
   const handleInputChange = (field: string, value: string | boolean) => {

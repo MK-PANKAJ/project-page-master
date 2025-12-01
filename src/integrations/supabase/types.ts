@@ -280,6 +280,7 @@ export type Database = {
       }
       plans: {
         Row: {
+          contact_message: string | null
           created_at: string | null
           description: string | null
           display_order: number | null
@@ -293,6 +294,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          contact_message?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
@@ -306,6 +308,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          contact_message?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
