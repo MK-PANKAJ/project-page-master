@@ -4,52 +4,66 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Video, BookOpen, Download } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface Resource {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string;
+  file_url: string | null;
+  downloads: number;
+}
+
+const getCategoryIcon = (category: string) => {
+  switch (category) {
+    case 'video':
+      return Video;
+    case 'article':
+      return BookOpen;
+    case 'worksheet':
+    case 'guide':
+    default:
+      return FileText;
+  }
+};
+
+const getCategoryLabel = (category: string) => {
+  switch (category) {
+    case 'worksheet': return 'Worksheet';
+    case 'guide': return 'Guide';
+    case 'video': return 'Video';
+    case 'article': return 'Article';
+    default: return category;
+  }
+};
 
 const Resources = () => {
-  const resources = [
-    {
-      title: "5 Mindfulness Techniques for Exam Stress",
-      category: "For Students",
-      type: "PDF",
-      description: "Practical breathing exercises and mindfulness practices to manage test anxiety",
-      icon: FileText,
-    },
-    {
-      title: "Understanding the Stop, Look, Go Model",
-      category: "For Parents",
-      type: "Video",
-      description: "A detailed explanation of Sivaram Raghavan's mindfulness methodology",
-      icon: Video,
-    },
-    {
-      title: "Pet Therapy Benefits: A Scientific Guide",
-      category: "For Educators",
-      type: "Article",
-      description: "Research-backed evidence on how animal therapy reduces stress",
-      icon: BookOpen,
-    },
-    {
-      title: "Grounding Exercises Worksheet",
-      category: "For Students",
-      type: "PDF",
-      description: "Downloadable activities to help stay present during anxious moments",
-      icon: FileText,
-    },
-    {
-      title: "Talking to Your Child About Mental Health",
-      category: "For Parents",
-      type: "Article",
-      description: "Tips for opening conversations about emotions and wellbeing",
-      icon: BookOpen,
-    },
-    {
-      title: "Building Emotional Intelligence in Teens",
-      category: "For Educators",
-      type: "Video",
-      description: "Strategies for helping students develop self-awareness and empathy",
-      icon: Video,
-    },
-  ];
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchResources();
+  }, []);
+
+  const fetchResources = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('resources')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setResources(data || []);
+    } catch (error) {
+      console.error('Error fetching resources:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -80,128 +94,84 @@ const Resources = () => {
               </TabsList>
 
               <TabsContent value="all" className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {resources.map((resource, index) => (
-                    <Card key={index} className="hover:shadow-lg transition-all duration-300 border-border">
-                      <CardHeader>
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                            <resource.icon className="h-6 w-6 text-primary" />
+                {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <Card key={i}>
+                        <CardHeader>
+                          <div className="flex items-start justify-between mb-3">
+                            <Skeleton className="w-12 h-12 rounded-lg" />
+                            <Skeleton className="h-5 w-20 rounded-full" />
                           </div>
-                          <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
-                            {resource.type}
-                          </span>
-                        </div>
-                        <CardTitle className="text-lg">{resource.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {resource.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">{resource.category}</span>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4 mr-2" />
-                            Access
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                          <Skeleton className="h-6 w-3/4" />
+                        </CardHeader>
+                        <CardContent>
+                          <Skeleton className="h-16 w-full mb-4" />
+                          <Skeleton className="h-8 w-24" />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {resources.map((resource) => {
+                      const IconComponent = getCategoryIcon(resource.category);
+                      return (
+                        <Card key={resource.id} className="hover:shadow-lg transition-all duration-300 border-border">
+                          <CardHeader>
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <IconComponent className="h-6 w-6 text-primary" />
+                              </div>
+                              <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
+                                {getCategoryLabel(resource.category)}
+                              </span>
+                            </div>
+                            <CardTitle className="text-lg">{resource.title}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              {resource.description}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-muted-foreground">{resource.downloads} downloads</span>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                asChild={!!resource.file_url}
+                                disabled={!resource.file_url}
+                              >
+                                {resource.file_url ? (
+                                  <a href={resource.file_url} target="_blank" rel="noopener noreferrer">
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Access
+                                  </a>
+                                ) : (
+                                  <>
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Coming Soon
+                                  </>
+                                )}
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="students">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {resources
-                    .filter((r) => r.category === "For Students")
-                    .map((resource, index) => (
-                      <Card key={index} className="hover:shadow-lg transition-all duration-300 border-border">
-                        <CardHeader>
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                              <resource.icon className="h-6 w-6 text-primary" />
-                            </div>
-                            <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
-                              {resource.type}
-                            </span>
-                          </div>
-                          <CardTitle className="text-lg">{resource.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            {resource.description}
-                          </p>
-                          <Button size="sm" variant="outline" className="w-full">
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
+                <p className="text-center text-muted-foreground mb-6">Filter by audience coming soon. For now, all resources are shown above.</p>
               </TabsContent>
 
               <TabsContent value="parents">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {resources
-                    .filter((r) => r.category === "For Parents")
-                    .map((resource, index) => (
-                      <Card key={index} className="hover:shadow-lg transition-all duration-300 border-border">
-                        <CardHeader>
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                              <resource.icon className="h-6 w-6 text-primary" />
-                            </div>
-                            <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
-                              {resource.type}
-                            </span>
-                          </div>
-                          <CardTitle className="text-lg">{resource.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            {resource.description}
-                          </p>
-                          <Button size="sm" variant="outline" className="w-full">
-                            <Download className="h-4 w-4 mr-2" />
-                            Access
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
+                <p className="text-center text-muted-foreground mb-6">Filter by audience coming soon. For now, all resources are shown above.</p>
               </TabsContent>
 
               <TabsContent value="educators">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {resources
-                    .filter((r) => r.category === "For Educators")
-                    .map((resource, index) => (
-                      <Card key={index} className="hover:shadow-lg transition-all duration-300 border-border">
-                        <CardHeader>
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                              <resource.icon className="h-6 w-6 text-primary" />
-                            </div>
-                            <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
-                              {resource.type}
-                            </span>
-                          </div>
-                          <CardTitle className="text-lg">{resource.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            {resource.description}
-                          </p>
-                          <Button size="sm" variant="outline" className="w-full">
-                            <Download className="h-4 w-4 mr-2" />
-                            Access
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
+                <p className="text-center text-muted-foreground mb-6">Filter by audience coming soon. For now, all resources are shown above.</p>
               </TabsContent>
             </Tabs>
           </div>

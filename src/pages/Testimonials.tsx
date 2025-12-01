@@ -3,72 +3,51 @@ import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Testimonial {
+  id: string;
   name: string;
-  role: string;
+  role: string | null;
   content: string;
-  rating: number;
-  initial: string;
-  colorClass: string;
+  rating: number | null;
+  image_url: string | null;
 }
+
+const colorClasses = [
+  "bg-primary/20 text-primary",
+  "bg-secondary/20 text-secondary",
+  "bg-tertiary/20 text-tertiary",
+];
 
 const Testimonials = () => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
 
-  const testimonials: Testimonial[] = [
-    {
-      name: "Priya Sharma",
-      role: "Student, Class 10",
-      content: "The therapy sessions with the dogs helped me manage my anxiety before exams. I feel much more confident now!",
-      rating: 5,
-      initial: "P",
-      colorClass: "bg-primary/20 text-primary",
-    },
-    {
-      name: "Rajesh Kumar",
-      role: "Parent",
-      content: "My daughter's emotional intelligence has improved significantly. The program is truly transformative.",
-      rating: 5,
-      initial: "R",
-      colorClass: "bg-secondary/20 text-secondary",
-    },
-    {
-      name: "Anita Desai",
-      role: "School Principal",
-      content: "Happy Space World's school certification program has made our campus a haven for student wellness.",
-      rating: 5,
-      initial: "A",
-      colorClass: "bg-tertiary/20 text-tertiary",
-    },
-    {
-      name: "Arjun Patel",
-      role: "Student, Class 12",
-      content: "The counseling sessions helped me deal with peer pressure. I'm grateful for this program.",
-      rating: 5,
-      initial: "A",
-      colorClass: "bg-primary/20 text-primary",
-    },
-    {
-      name: "Meera Singh",
-      role: "Teacher",
-      content: "The positive impact on our students' mental health is remarkable. Highly recommend!",
-      rating: 5,
-      initial: "M",
-      colorClass: "bg-secondary/20 text-secondary",
-    },
-    {
-      name: "Vikram Reddy",
-      role: "Student, Class 9",
-      content: "I learned so many coping strategies. The therapy pets are amazing companions!",
-      rating: 5,
-      initial: "V",
-      colorClass: "bg-tertiary/20 text-tertiary",
-    },
-  ];
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTestimonials(data || []);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const totalPages = Math.ceil(testimonials.length / itemsPerPage);
   const paginatedTestimonials = testimonials.slice(
@@ -96,40 +75,72 @@ const Testimonials = () => {
         {/* Testimonials Grid */}
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-              {paginatedTestimonials.map((testimonial, index) => (
-                <Card
-                  key={`${currentPage}-${index}`}
-                  className="hover:shadow-lg transition-all duration-300 animate-scale-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4 mb-4">
-                      <div
-                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${testimonial.colorClass}`}
-                      >
-                        {testimonial.initial}
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardContent className="pt-6">
+                      <div className="flex items-start gap-4 mb-4">
+                        <Skeleton className="w-12 h-12 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-foreground">{testimonial.name}</h4>
-                        <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                      </div>
-                    </div>
-                    <div className="flex mb-3">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-4 w-4 fill-amber text-amber"
-                        />
-                      ))}
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">
-                      "{testimonial.content}"
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <Skeleton className="h-3 w-20 mb-3" />
+                      <Skeleton className="h-16 w-full" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                {paginatedTestimonials.map((testimonial, index) => {
+                  const initial = testimonial.name.charAt(0).toUpperCase();
+                  const colorClass = colorClasses[index % colorClasses.length];
+                  const rating = testimonial.rating || 5;
+                  
+                  return (
+                    <Card
+                      key={testimonial.id}
+                      className="hover:shadow-lg transition-all duration-300 animate-scale-in"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <CardContent className="pt-6">
+                        <div className="flex items-start gap-4 mb-4">
+                          {testimonial.image_url ? (
+                            <img 
+                              src={testimonial.image_url} 
+                              alt={testimonial.name}
+                              className="w-12 h-12 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${colorClass}`}>
+                              {initial}
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-foreground">{testimonial.name}</h4>
+                            <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                          </div>
+                        </div>
+                        <div className="flex mb-3">
+                          {Array.from({ length: rating }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className="h-4 w-4 fill-amber text-amber"
+                            />
+                          ))}
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          "{testimonial.content}"
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Pagination */}
             {totalPages > 1 && (
