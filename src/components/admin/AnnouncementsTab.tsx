@@ -47,7 +47,7 @@ export function AnnouncementsTab() {
         setTitle(data.title);
         setMessage(data.message);
         setImageUrl(data.image_url || "");
-        setIsActive(data.is_active);
+        setIsActive(!!data.is_active);
       }
     } catch (error) {
       console.error("Error fetching announcement:", error);
