@@ -47,6 +47,7 @@ export const Header = () => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem><Link to="/about"><NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary">About</NavigationMenuLink></Link></NavigationMenuItem>
+              <NavigationMenuItem><Link to="/blog"><NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary">Blog</NavigationMenuLink></Link></NavigationMenuItem>
               <NavigationMenuItem><Link to="/gallery"><NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary">Gallery</NavigationMenuLink></Link></NavigationMenuItem>
               <NavigationMenuItem><Link to="/testimonials"><NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-primary">Testimonials</NavigationMenuLink></Link></NavigationMenuItem>
             </NavigationMenuList>
@@ -69,6 +70,7 @@ export const Header = () => {
             <Link to="/schools" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>For Schools</Link>
             <Link to="/about" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>About</Link>
             <Link to="/resources" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
+            <Link to="/blog" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
             <Link to="/gallery" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Gallery</Link>
             <Link to="/testimonials" className="block px-4 py-2 rounded-md hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Testimonials</Link>
             <Link to="/contact"><Button className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-semibold" onClick={() => setMobileMenuOpen(false)}>Book Session</Button></Link>
