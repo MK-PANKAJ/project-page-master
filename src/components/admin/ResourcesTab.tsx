@@ -24,6 +24,7 @@ interface Resource {
   downloads: number;
   is_active: boolean;
   created_at: string;
+  audience: string;
 }
 
 export function ResourcesTab() {
@@ -37,6 +38,7 @@ export function ResourcesTab() {
     title: "",
     description: "",
     category: "worksheet" as const,
+    audience: "all" as string,
     file_url: null as string | null,
     thumbnail_url: null as string | null,
     is_active: true,
@@ -93,7 +95,7 @@ export function ResourcesTab() {
 
       setDialogOpen(false);
       setEditingId(null);
-      setFormData({ title: "", description: "", category: "worksheet", file_url: null, thumbnail_url: null, is_active: true });
+      setFormData({ title: "", description: "", category: "worksheet", audience: "all", file_url: null, thumbnail_url: null, is_active: true });
       setGoogleDriveLink("");
       setFileSourceTab("upload");
       fetchResources();
@@ -133,6 +135,7 @@ export function ResourcesTab() {
       title: resource.title,
       description: resource.description || "",
       category: resource.category as any,
+      audience: resource.audience || "all",
       file_url: resource.file_url,
       thumbnail_url: resource.thumbnail_url,
       is_active: resource.is_active,
@@ -162,7 +165,7 @@ export function ResourcesTab() {
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingId(null);
-              setFormData({ title: "", description: "", category: "worksheet", file_url: null, thumbnail_url: null, is_active: true });
+              setFormData({ title: "", description: "", category: "worksheet", audience: "all", file_url: null, thumbnail_url: null, is_active: true });
               setGoogleDriveLink("");
               setFileSourceTab("upload");
             }}>
@@ -210,6 +213,20 @@ export function ResourcesTab() {
                     <SelectItem value="video">Video</SelectItem>
                     <SelectItem value="article">Article</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="audience">Target Audience</Label>
+                <Select value={formData.audience} onValueChange={(value) => setFormData({ ...formData, audience: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Audiences</SelectItem>
+                    <SelectItem value="students">Students</SelectItem>
+                    <SelectItem value="parents">Parents</SelectItem>
+                    <SelectItem value="educators">Educators</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -291,6 +308,7 @@ export function ResourcesTab() {
                     <CardTitle className="text-lg">{resource.title}</CardTitle>
                     <div className="flex gap-2 mt-2">
                       <Badge>{resource.category}</Badge>
+                      <Badge variant="secondary">{resource.audience === 'all' ? 'All' : resource.audience}</Badge>
                       {resource.is_active ? (
                         <Badge variant="secondary">Active</Badge>
                       ) : (

@@ -17,6 +17,7 @@ interface Resource {
   category: string;
   file_url: string | null;
   downloads: number;
+  audience: string;
 }
 
 const getCategoryIcon = (category: string) => {
@@ -45,6 +46,7 @@ const getCategoryLabel = (category: string) => {
 const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAudience, setSelectedAudience] = useState<string>('all');
 
   useEffect(() => {
     fetchResources();
@@ -65,6 +67,15 @@ const Resources = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getFilteredResources = () => {
+    if (selectedAudience === 'all') {
+      return resources;
+    }
+    return resources.filter(
+      resource => resource.audience === selectedAudience || resource.audience === 'all'
+    );
   };
 
   return (
@@ -92,7 +103,7 @@ const Resources = () => {
         {/* Resources Section */}
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
-            <Tabs defaultValue="all" className="max-w-6xl mx-auto">
+            <Tabs defaultValue="all" className="max-w-6xl mx-auto" onValueChange={setSelectedAudience}>
               <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-12">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="students">For Students</TabsTrigger>
@@ -121,7 +132,7 @@ const Resources = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {resources.map((resource) => {
+                    {getFilteredResources().map((resource) => {
                       const IconComponent = getCategoryIcon(resource.category);
                       return (
                         <Card key={resource.id} className="hover:shadow-lg transition-all duration-300 border-border">
@@ -169,16 +180,151 @@ const Resources = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="students">
-                <p className="text-center text-muted-foreground mb-6">Filter by audience coming soon. For now, all resources are shown above.</p>
+              <TabsContent value="students" className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {getFilteredResources().map((resource) => {
+                    const IconComponent = getCategoryIcon(resource.category);
+                    return (
+                      <Card key={resource.id} className="hover:shadow-lg transition-all duration-300 border-border">
+                        <CardHeader>
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <IconComponent className="h-6 w-6 text-primary" />
+                            </div>
+                            <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
+                              {getCategoryLabel(resource.category)}
+                            </span>
+                          </div>
+                          <CardTitle className="text-lg">{resource.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            {resource.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">{resource.downloads} downloads</span>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              asChild={!!resource.file_url}
+                              disabled={!resource.file_url}
+                            >
+                              {resource.file_url ? (
+                                <a href={resource.file_url} target="_blank" rel="noopener noreferrer">
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Access
+                                </a>
+                              ) : (
+                                <>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Coming Soon
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </TabsContent>
 
-              <TabsContent value="parents">
-                <p className="text-center text-muted-foreground mb-6">Filter by audience coming soon. For now, all resources are shown above.</p>
+              <TabsContent value="parents" className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {getFilteredResources().map((resource) => {
+                    const IconComponent = getCategoryIcon(resource.category);
+                    return (
+                      <Card key={resource.id} className="hover:shadow-lg transition-all duration-300 border-border">
+                        <CardHeader>
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <IconComponent className="h-6 w-6 text-primary" />
+                            </div>
+                            <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
+                              {getCategoryLabel(resource.category)}
+                            </span>
+                          </div>
+                          <CardTitle className="text-lg">{resource.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            {resource.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">{resource.downloads} downloads</span>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              asChild={!!resource.file_url}
+                              disabled={!resource.file_url}
+                            >
+                              {resource.file_url ? (
+                                <a href={resource.file_url} target="_blank" rel="noopener noreferrer">
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Access
+                                </a>
+                              ) : (
+                                <>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Coming Soon
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </TabsContent>
 
-              <TabsContent value="educators">
-                <p className="text-center text-muted-foreground mb-6">Filter by audience coming soon. For now, all resources are shown above.</p>
+              <TabsContent value="educators" className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {getFilteredResources().map((resource) => {
+                    const IconComponent = getCategoryIcon(resource.category);
+                    return (
+                      <Card key={resource.id} className="hover:shadow-lg transition-all duration-300 border-border">
+                        <CardHeader>
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <IconComponent className="h-6 w-6 text-primary" />
+                            </div>
+                            <span className="text-xs px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
+                              {getCategoryLabel(resource.category)}
+                            </span>
+                          </div>
+                          <CardTitle className="text-lg">{resource.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            {resource.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">{resource.downloads} downloads</span>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              asChild={!!resource.file_url}
+                              disabled={!resource.file_url}
+                            >
+                              {resource.file_url ? (
+                                <a href={resource.file_url} target="_blank" rel="noopener noreferrer">
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Access
+                                </a>
+                              ) : (
+                                <>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Coming Soon
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </TabsContent>
             </Tabs>
           </div>
