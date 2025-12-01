@@ -32,6 +32,17 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+// HTML sanitization to prevent XSS in email clients
+function escapeHtml(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 interface NotificationRequest {
   type: "contact" | "booking";
   data: {
@@ -69,18 +80,71 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { type, data }: NotificationRequest = await req.json();
 
+    // Validate notification type
+    if (!type || !['contact', 'booking'].includes(type)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid notification type" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate required fields
+    if (!data || !data.name || !data.email) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields: name and email" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate field lengths
+    if (data.name.length > 100) {
+      return new Response(
+        JSON.stringify({ error: "Name must be less than 100 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (data.email.length > 255) {
+      return new Response(
+        JSON.stringify({ error: "Email must be less than 255 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (data.message && data.message.length > 2000) {
+      return new Response(
+        JSON.stringify({ error: "Message must be less than 2000 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (data.organization_name && data.organization_name.length > 200) {
+      return new Response(
+        JSON.stringify({ error: "Organization name must be less than 200 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     if (!adminEmail) {
       console.error("ADMIN_EMAIL not configured");
       return new Response(
-        JSON.stringify({ error: "Admin email not configured" }),
+        JSON.stringify({ error: "Server configuration error" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Generate email content based on type
+    // Generate email content based on type with sanitized inputs
+    const safeName = escapeHtml(data.name);
+    const safeEmail = escapeHtml(data.email);
+    const safePhone = data.phone ? escapeHtml(data.phone) : '';
+    const safeInquiryType = data.inquiry_type ? escapeHtml(data.inquiry_type) : '';
+    const safeBookingType = data.booking_type ? escapeHtml(data.booking_type) : '';
+    const safeOrganization = data.organization_name ? escapeHtml(data.organization_name) : '';
+    const safeMessage = data.message ? escapeHtml(data.message) : '';
+
     const subject = type === "booking" 
-      ? `🎉 New Booking Request from ${data.name}`
-      : `📧 New Contact Form Submission from ${data.name}`;
+      ? `🎉 New Booking Request from ${safeName}`
+      : `📧 New Contact Form Submission from ${safeName}`;
 
     const html = `
       <!DOCTYPE html>
@@ -107,44 +171,44 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="content">
               <div class="info-row">
                 <span class="label">Name:</span>
-                <span class="value">${data.name}</span>
+                <span class="value">${safeName}</span>
               </div>
               <div class="info-row">
                 <span class="label">Email:</span>
-                <span class="value"><a href="mailto:${data.email}">${data.email}</a></span>
+                <span class="value"><a href="mailto:${safeEmail}">${safeEmail}</a></span>
               </div>
-              ${data.phone ? `
+              ${safePhone ? `
                 <div class="info-row">
                   <span class="label">Phone:</span>
-                  <span class="value"><a href="tel:${data.phone}">${data.phone}</a></span>
+                  <span class="value"><a href="tel:${safePhone}">${safePhone}</a></span>
                 </div>
               ` : ''}
-              ${type === "contact" && data.inquiry_type ? `
+              ${type === "contact" && safeInquiryType ? `
                 <div class="info-row">
                   <span class="label">Inquiry Type:</span>
-                  <span class="value">${data.inquiry_type}</span>
+                  <span class="value">${safeInquiryType}</span>
                 </div>
               ` : ''}
-              ${type === "booking" && data.booking_type ? `
+              ${type === "booking" && safeBookingType ? `
                 <div class="info-row">
                   <span class="label">Booking Type:</span>
-                  <span class="value">${data.booking_type === 'student' ? 'Individual Student' : 'School Program'}</span>
+                  <span class="value">${safeBookingType === 'student' ? 'Individual Student' : 'School Program'}</span>
                 </div>
               ` : ''}
-              ${data.organization_name ? `
+              ${safeOrganization ? `
                 <div class="info-row">
                   <span class="label">Organization:</span>
-                  <span class="value">${data.organization_name}</span>
+                  <span class="value">${safeOrganization}</span>
                 </div>
               ` : ''}
-              ${data.message ? `
+              ${safeMessage ? `
                 <div class="message-box">
                   <h3 style="color: #52A5A5; margin-top: 0;">Message:</h3>
-                  <p style="white-space: pre-wrap;">${data.message}</p>
+                  <p style="white-space: pre-wrap;">${safeMessage}</p>
                 </div>
               ` : ''}
               <div class="footer">
-                <p>Reply directly to this email to respond to ${data.name}</p>
+                <p>Reply directly to this email to respond to ${safeName}</p>
                 <p style="color: #999;">Sent from Happy Space World</p>
               </div>
             </div>
@@ -169,9 +233,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Email notification error:", error.message);
+    console.error("Email notification error");
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Failed to send notification" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
