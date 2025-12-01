@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Phone, Mail, Clock } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { SEOHead } from "@/components/SEOHead";
 
 // Validation schemas
 const contactSchema = z.object({
@@ -72,6 +74,7 @@ const bookingSchema = z.object({
 
 const Contact = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -82,6 +85,36 @@ const Contact = () => {
     privacyAccepted: false,
     organizationName: "",
   });
+
+  // Auto-fill form from URL parameters
+  useEffect(() => {
+    const type = searchParams.get('type');
+    const source = searchParams.get('source');
+    
+    if (type) {
+      setFormData(prev => ({
+        ...prev,
+        inquiryType: type === 'student' || type === 'school' ? type : 'general'
+      }));
+    }
+    
+    if (source && type) {
+      const messages: Record<string, string> = {
+        'student-booking': 'I would like to book a student counseling session.',
+        'school-demo': 'I would like to request a demo of your school programs.',
+        'school-pricing': 'I would like more information about school program pricing.',
+        'resources': 'I have a question about your resources.',
+        'testimonials': 'I would like to share my experience or ask about testimonials.',
+      };
+      
+      const messageKey = `${type}-${source}`;
+      const message = messages[messageKey] || messages[source] || '';
+      
+      if (message) {
+        setFormData(prev => ({ ...prev, message }));
+      }
+    }
+  }, [searchParams]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -230,8 +263,13 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
+      <SEOHead
+        title="Contact Us - Happy Space World"
+        description="Get in touch with us for counseling sessions, school programs, or general inquiries. We're here to help support student mental wellness."
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -463,10 +501,11 @@ const Contact = () => {
           </div>
         </section>
 
-      </main>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 
