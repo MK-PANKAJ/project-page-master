@@ -59,7 +59,7 @@ const Students = () => {
               Track your progress, celebrate your success, and discover your path to calm and confidence
             </p>
             <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark">
-              <Link to="/contact?type=student&source=booking">Book Your First Session</Link>
+              <Link to="/contact?type=student&source=booking#contact-form">Book Your First Session</Link>
             </Button>
           </div>
         </section>
@@ -89,7 +89,7 @@ const Students = () => {
                     <li>• Confidential & supportive</li>
                   </ul>
                   <Button asChild className="w-full">
-                    <Link to="/contact?type=student&source=booking">Book Session</Link>
+                    <Link to="/contact?type=student&source=booking#contact-form">Book Session</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -111,7 +111,7 @@ const Students = () => {
                     <li>• Interactive & fun activities</li>
                   </ul>
                   <Button asChild className="w-full bg-secondary hover:bg-secondary-dark">
-                    <Link to="/contact?type=student&source=booking">Join Program</Link>
+                    <Link to="/contact?type=student&source=booking#contact-form">Join Program</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -253,7 +253,7 @@ const Students = () => {
                       </ul>
                       <Button asChild className="w-full" size="lg">
                         <Link
-                          to={`/contact?type=student&source=plan${plan.contact_message ? '&planId=' + plan.id : ''}`}
+                          to={`/contact?type=student&source=plan${plan.contact_message ? '&planId=' + plan.id : ''}#contact-form`}
                         >
                           Get Started Today
                         </Link>
@@ -267,7 +267,7 @@ const Students = () => {
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">No pricing plan available. Please contact us for details.</p>
                   <Button asChild className="mt-4">
-                    <Link to="/contact?type=student">Contact Us</Link>
+                    <Link to="/contact?type=student#contact-form">Contact Us</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -285,7 +285,7 @@ const Students = () => {
               Join Happy Space World today and discover a calmer, more confident you
             </p>
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-              <Link to="/contact?type=student&source=booking">Book Your First Session</Link>
+              <Link to="/contact?type=student&source=booking#contact-form">Book Your First Session</Link>
             </Button>
           </div>
         </section>
