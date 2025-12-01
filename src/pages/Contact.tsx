@@ -222,10 +222,10 @@ const Contact = () => {
   const handleBooking = async (bookingType: 'student' | 'school') => {
     setIsSubmitting(true);
     
-    // Set pre-filled message based on booking type
+    // Set specific message based on booking type
     const bookingMessages = {
-      student: formData.message || "I'm interested in 1-on-1 Expert Counseling. I would like personalized guidance from Sivaram Raghavan's network of trained counselors for weekly or bi-weekly sessions.",
-      school: formData.message || "I'm interested in Group Wellness Programs. I would like to arrange pet therapy, icebreakers, and group discussions for my school students."
+      student: "I'm interested in 1-on-1 Expert Counseling. I would like personalized guidance from Sivaram Raghavan's network of trained counselors for weekly or bi-weekly sessions.",
+      school: "I'm interested in Group Wellness Programs. I would like to arrange pet therapy, icebreakers, and group discussions for my school students."
     };
     
     try {
