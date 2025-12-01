@@ -37,13 +37,6 @@ export const useAutoSignOut = () => {
     // Set initial timer
     resetTimer();
 
-    // Sign out when tab/window closes
-    const handleBeforeUnload = async () => {
-      await supabase.auth.signOut();
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -51,7 +44,6 @@ export const useAutoSignOut = () => {
       events.forEach(event => {
         document.removeEventListener(event, resetTimer);
       });
-      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
