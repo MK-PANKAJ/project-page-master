@@ -222,6 +222,12 @@ const Contact = () => {
   const handleBooking = async (bookingType: 'student' | 'school') => {
     setIsSubmitting(true);
     
+    // Set pre-filled message based on booking type
+    const bookingMessages = {
+      student: formData.message || "I'm interested in 1-on-1 Expert Counseling. I would like personalized guidance from Sivaram Raghavan's network of trained counselors for weekly or bi-weekly sessions.",
+      school: formData.message || "I'm interested in Group Wellness Programs. I would like to arrange pet therapy, icebreakers, and group discussions for my school students."
+    };
+    
     try {
       // Validate input
       const validated = bookingSchema.parse({
@@ -229,7 +235,7 @@ const Contact = () => {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        message: formData.message,
+        message: bookingMessages[bookingType],
         organizationName: formData.organizationName
       });
 
