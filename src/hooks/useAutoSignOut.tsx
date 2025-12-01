@@ -1,14 +1,27 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+const WARNING_TIME = 2 * 60 * 1000; // 2 minutes before timeout
 
 export const useAutoSignOut = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const warningTimeoutRef = useRef<NodeJS.Timeout>();
+  const [showWarning, setShowWarning] = useState(false);
 
   const signOut = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -23,10 +36,33 @@ export const useAutoSignOut = () => {
   };
 
   const resetTimer = () => {
+    // Clear existing timers
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
+    if (warningTimeoutRef.current) {
+      clearTimeout(warningTimeoutRef.current);
+    }
+    
+    // Hide warning if it's showing
+    setShowWarning(false);
+
+    // Set warning timer (13 minutes)
+    warningTimeoutRef.current = setTimeout(() => {
+      setShowWarning(true);
+    }, INACTIVITY_TIMEOUT - WARNING_TIME);
+
+    // Set signout timer (15 minutes)
     timeoutRef.current = setTimeout(signOut, INACTIVITY_TIMEOUT);
+  };
+
+  const handleExtendSession = () => {
+    setShowWarning(false);
+    resetTimer();
+    toast({
+      title: "Session extended",
+      description: "Your session has been extended",
+    });
   };
 
   useEffect(() => {
@@ -44,11 +80,31 @@ export const useAutoSignOut = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      if (warningTimeoutRef.current) {
+        clearTimeout(warningTimeoutRef.current);
+      }
       events.forEach(event => {
         document.removeEventListener(event, resetTimer);
       });
     };
   }, []);
 
-  return null;
+  return (
+    <AlertDialog open={showWarning} onOpenChange={setShowWarning}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Session Expiring Soon</AlertDialogTitle>
+          <AlertDialogDescription>
+            Your session will expire in 2 minutes due to inactivity. Would you like to extend your session?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={signOut}>Sign Out Now</AlertDialogCancel>
+          <AlertDialogAction onClick={handleExtendSession}>
+            Extend Session
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 };

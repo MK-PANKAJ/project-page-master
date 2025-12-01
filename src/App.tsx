@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
-import { AutoSignOutWrapper } from "@/components/AutoSignOutWrapper";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Students from "./pages/Students";
@@ -29,9 +28,8 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AutoSignOutWrapper>
-            <AnnouncementBanner />
-            <Routes>
+          <AnnouncementBanner />
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/students" element={<Students />} />
@@ -46,8 +44,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AutoSignOutWrapper>
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

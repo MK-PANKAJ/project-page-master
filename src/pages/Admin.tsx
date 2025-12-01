@@ -25,8 +25,8 @@ export default function Admin() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   
-  // Auto sign out on inactivity or tab close
-  useAutoSignOut();
+  // Auto sign out on inactivity - renders warning dialog
+  const AutoSignOutDialog = useAutoSignOut();
 
   useEffect(() => {
     checkAuth();
@@ -94,6 +94,7 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {AutoSignOutDialog}
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">
