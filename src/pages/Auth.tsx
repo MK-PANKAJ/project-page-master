@@ -26,6 +26,8 @@ export default function Auth() {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     if (hashParams.get('type') === 'recovery') {
       setIsResettingPassword(true);
+      // Sign out immediately to prevent auto-login during password reset
+      supabase.auth.signOut();
     }
 
     // Set up auth state listener FIRST
@@ -35,22 +37,24 @@ export default function Auth() {
         setUser(session?.user ?? null);
         
         // Redirect to admin if authenticated and not resetting password
-        if (session?.user && event !== 'PASSWORD_RECOVERY') {
+        if (session?.user && !isResettingPassword && event !== 'PASSWORD_RECOVERY') {
           navigate("/admin");
         }
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      // Redirect to admin if already authenticated
-      if (session?.user) {
-        navigate("/admin");
-      }
-    });
+    // THEN check for existing session (but not if resetting password)
+    if (!hashParams.get('type')) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Redirect to admin if already authenticated
+        if (session?.user) {
+          navigate("/admin");
+        }
+      });
+    }
 
     return () => subscription.unsubscribe();
   }, [navigate]);
