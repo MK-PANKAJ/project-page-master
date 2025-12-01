@@ -1,83 +1,139 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-students-pets.jpg";
-import therapyPetImage from "@/assets/therapy-pet.jpg";
-import counselingImage from "@/assets/counseling-session.jpg";
-import progressImage from "@/assets/progress-tracking.jpg";
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { SEOHead } from "@/components/SEOHead";
 
-interface GalleryImage {
-  src: string;
-  alt: string;
-  title?: string;
+interface GalleryItem {
+  id: string;
+  title: string;
+  alt_text: string;
+  image_url: string;
+  collection: string | null;
 }
 
 const Gallery = () => {
+  const [items, setItems] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const itemsPerPage = 9;
 
-  const galleryImages: GalleryImage[] = [
-    { src: heroImage, alt: "Students with therapy pets", title: "Happy Students" },
-    { src: therapyPetImage, alt: "Therapy pet session", title: "Therapy Sessions" },
-    { src: counselingImage, alt: "Counseling session", title: "Counseling" },
-    { src: progressImage, alt: "Progress tracking", title: "Progress Reports" },
-    { src: heroImage, alt: "Group activity", title: "Group Activities" },
-    { src: therapyPetImage, alt: "Pet interaction", title: "Pet Therapy" },
-    { src: counselingImage, alt: "Individual counseling", title: "One-on-One Sessions" },
-    { src: progressImage, alt: "Achievement tracking", title: "Student Success" },
-    { src: heroImage, alt: "Outdoor activities", title: "Outdoor Programs" },
-  ];
+  useEffect(() => {
+    fetchGalleryItems();
+  }, []);
 
-  const totalPages = Math.ceil(galleryImages.length / itemsPerPage);
-  const paginatedImages = galleryImages.slice(
+  const fetchGalleryItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("gallery_items")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      setItems(data || []);
+    } catch (error) {
+      console.error("Error fetching gallery:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const collections = Array.from(new Set(items.map(item => item.collection).filter(Boolean)));
+  const filteredItems = selectedCollection
+    ? items.filter(item => item.collection === selectedCollection)
+    : items;
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const paginatedImages = filteredItems.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-tertiary text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Gallery</h1>
-            <p className="text-xl max-w-2xl mx-auto opacity-95">
-              Explore moments of joy, growth, and transformation from our programs
-            </p>
-          </div>
-        </section>
-
-        {/* Gallery Grid */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-              {paginatedImages.map((image, index) => (
-                <Card
-                  key={`${currentPage}-${index}`}
-                  className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer animate-scale-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    {image.title && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                        <p className="text-white p-4 font-semibold">{image.title}</p>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              ))}
+    <>
+      <SEOHead
+        title="Gallery - Happy Space World"
+        description="Explore our gallery of student wellness activities, events, and therapy pet sessions."
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        
+        <main className="flex-1">
+          {/* Hero Section */}
+          <section className="py-20 bg-gradient-to-br from-primary to-tertiary text-white">
+            <div className="container mx-auto px-4 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Gallery</h1>
+              <p className="text-xl max-w-2xl mx-auto opacity-95">
+                Explore moments of joy, growth, and transformation from our programs
+              </p>
             </div>
+          </section>
+
+          {/* Gallery Grid */}
+          <section className="py-20 bg-background">
+            <div className="container mx-auto px-4">
+              {collections.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 mb-8">
+                  <Button
+                    variant={!selectedCollection ? "default" : "outline"}
+                    onClick={() => setSelectedCollection(null)}
+                  >
+                    All
+                  </Button>
+                  {collections.map((collection) => (
+                    <Button
+                      key={collection}
+                      variant={selectedCollection === collection ? "default" : "outline"}
+                      onClick={() => {
+                        setSelectedCollection(collection);
+                        setCurrentPage(0);
+                      }}
+                    >
+                      {collection}
+                    </Button>
+                  ))}
+                </div>
+              )}
+
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(9)].map((_, i) => (
+                    <Skeleton key={i} className="h-64 rounded-lg" />
+                  ))}
+                </div>
+              ) : paginatedImages.length === 0 ? (
+                <div className="text-center py-16">
+                  <p className="text-muted-foreground">No gallery items found.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                  {paginatedImages.map((image, index) => (
+                    <Card
+                      key={image.id}
+                      className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer animate-scale-in"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <div className="relative h-64 overflow-hidden">
+                        <img
+                          src={image.image_url}
+                          alt={image.alt_text}
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                          <p className="text-white p-4 font-semibold">{image.title}</p>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
 
             {/* Pagination */}
             {totalPages > 1 && (
@@ -126,6 +182,7 @@ const Gallery = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 
