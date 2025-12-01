@@ -26,11 +26,11 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AutoSignOutWrapper>
-          <Toaster />
-          <Sonner />
-          <AnnouncementBanner />
-          <BrowserRouter>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AutoSignOutWrapper>
+            <AnnouncementBanner />
             <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -47,8 +47,8 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </AutoSignOutWrapper>
+          </AutoSignOutWrapper>
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>
