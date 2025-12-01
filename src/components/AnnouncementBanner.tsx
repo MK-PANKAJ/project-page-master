@@ -38,14 +38,8 @@ export function AnnouncementBanner() {
       if (error) throw error;
 
       if (data) {
-        // Check if user has closed this announcement in this session
-        const closedAnnouncements = sessionStorage.getItem("closedAnnouncements");
-        const closedIds = closedAnnouncements ? JSON.parse(closedAnnouncements) : [];
-        
-        if (!closedIds.includes(data.id)) {
-          setAnnouncement(data);
-          setIsOpen(true);
-        }
+        setAnnouncement(data);
+        setIsOpen(true);
       }
     } catch (error) {
       console.error("Error fetching announcement:", error);
@@ -53,13 +47,6 @@ export function AnnouncementBanner() {
   };
 
   const handleClose = () => {
-    if (announcement) {
-      // Save to session storage that this announcement was closed
-      const closedAnnouncements = sessionStorage.getItem("closedAnnouncements");
-      const closedIds = closedAnnouncements ? JSON.parse(closedAnnouncements) : [];
-      closedIds.push(announcement.id);
-      sessionStorage.setItem("closedAnnouncements", JSON.stringify(closedIds));
-    }
     setIsOpen(false);
   };
 
