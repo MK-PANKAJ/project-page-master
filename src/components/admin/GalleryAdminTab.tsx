@@ -190,7 +190,7 @@ export function GalleryAdminTab() {
               </div>
 
               <ImageUpload
-                bucket="resource-files"
+                bucket="gallery-images"
                 currentUrl={formData.image_url}
                 onUploadComplete={(url) => setFormData({ ...formData, image_url: url })}
                 onRemove={() => setFormData({ ...formData, image_url: null })}
