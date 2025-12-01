@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
 
 export const useAutoSignOut = () => {
   const navigate = useNavigate();
@@ -11,6 +11,9 @@ export const useAutoSignOut = () => {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   const signOut = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return; // Don't sign out if not authenticated
+    
     await supabase.auth.signOut();
     toast({
       title: "Signed out",
