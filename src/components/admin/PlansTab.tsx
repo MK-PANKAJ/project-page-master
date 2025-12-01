@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Plan {
   id: string;
@@ -42,6 +43,7 @@ export function PlansTab() {
     contact_message: "",
   });
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     fetchPlans();
@@ -110,6 +112,9 @@ export function PlansTab() {
       setEditingId(null);
       setFormData({ name: "", description: "", price: 0, duration_weeks: 4, features: "", plan_type: "student", is_active: true, display_order: 0, contact_message: "" });
       fetchPlans();
+      // Invalidate queries to refresh Students and Schools pages
+      queryClient.invalidateQueries({ queryKey: ['student-plan'] });
+      queryClient.invalidateQueries({ queryKey: ['school-plans'] });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -131,6 +136,9 @@ export function PlansTab() {
       if (error) throw error;
       toast({ title: "Success", description: "Plan deleted" });
       fetchPlans();
+      // Invalidate queries to refresh Students and Schools pages
+      queryClient.invalidateQueries({ queryKey: ['student-plan'] });
+      queryClient.invalidateQueries({ queryKey: ['school-plans'] });
     } catch (error: any) {
       toast({
         title: "Error",
