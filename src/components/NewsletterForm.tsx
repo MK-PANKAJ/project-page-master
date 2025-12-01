@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.object({
   email: z.string().email("Invalid email address").toLowerCase(),
@@ -31,34 +32,17 @@ export function NewsletterForm() {
       // Validate email
       const validated = emailSchema.parse({ email, honeypot });
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/subscribe-newsletter`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: validated.email }),
-        }
-      );
+      const { data, error } = await supabase.functions.invoke('subscribe-newsletter', {
+        body: { email: validated.email },
+      });
 
-      const data = await response.json();
+      if (error) throw error;
 
-      if (response.ok) {
-        toast({
-          title: "Success!",
-          description: "You've been subscribed to our newsletter",
-        });
-        setEmail("");
-      } else if (response.status === 429) {
-        toast({
-          title: "Too many requests",
-          description: "Please try again later",
-          variant: "destructive",
-        });
-      } else {
-        throw new Error(data.error || "Failed to subscribe");
-      }
+      toast({
+        title: "Success!",
+        description: data?.message || "You've been subscribed to our newsletter",
+      });
+      setEmail("");
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast({
