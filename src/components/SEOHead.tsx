@@ -8,9 +8,10 @@ interface SEOHeadProps {
   description?: string;
   image?: string;
   type?: string;
+  preloadImage?: string;
 }
 
-export function SEOHead({ title, description, image, type = "website" }: SEOHeadProps) {
+export function SEOHead({ title, description, image, type = "website", preloadImage }: SEOHeadProps) {
   const location = useLocation();
   const [pageMetadata, setPageMetadata] = useState<any>(null);
 
@@ -45,6 +46,16 @@ export function SEOHead({ title, description, image, type = "website" }: SEOHead
 
   return (
     <Helmet>
+      {/* Preload LCP Image */}
+      {preloadImage && (
+        <link 
+          rel="preload" 
+          as="image" 
+          href={preloadImage}
+          fetchPriority="high"
+        />
+      )}
+
       {/* Basic Meta Tags */}
       <title>{finalTitle}</title>
       <meta name="description" content={finalDescription} />

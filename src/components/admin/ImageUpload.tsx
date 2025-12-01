@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, X, Loader2, Link2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { convertToWebP, supportsWebP } from "@/lib/imageUtils";
 
 interface ImageUploadProps {
   bucket: string;
@@ -88,15 +89,30 @@ export function ImageUpload({
     setUploading(true);
 
     try {
+      // Convert to WebP if supported and if it's an image
+      let fileToUpload = file;
+      if (supportsWebP() && file.type.startsWith('image/')) {
+        try {
+          fileToUpload = await convertToWebP(file, 0.85);
+          toast({
+            title: "Optimizing",
+            description: "Converting image to WebP format...",
+          });
+        } catch (conversionError) {
+          console.warn('WebP conversion failed, uploading original:', conversionError);
+          // Continue with original file if conversion fails
+        }
+      }
+
       // Create unique filename
-      const fileExt = file.name.split('.').pop();
+      const fileExt = fileToUpload.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(filePath, file, {
+        .upload(filePath, fileToUpload, {
           cacheControl: '3600',
           upsert: false
         });
