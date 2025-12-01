@@ -33,7 +33,7 @@ export function SEOHead({ title, description, image, type = "website", preloadIm
 
   const defaultTitle = "Happy Space World – Student Mental Wellness";
   const defaultDescription = "Empowering students with accessible mental wellness support through counseling, resources, and community.";
-  const defaultImage = "https://ebaa830d-b1c9-4a1f-9061-27e0651ce5b1.lovableproject.com/og-image.jpg";
+  const defaultImage = `${window.location.origin}/happy-space-og.png`;
 
   const finalTitle = pageMetadata?.meta_title || title || defaultTitle;
   const finalDescription = pageMetadata?.meta_description || description || defaultDescription;
