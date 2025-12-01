@@ -24,10 +24,10 @@ export default function Auth() {
   useEffect(() => {
     // Check if this is a password reset callback
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    if (hashParams.get('type') === 'recovery') {
+    const isRecoveryLink = hashParams.get('type') === 'recovery';
+
+    if (isRecoveryLink) {
       setIsResettingPassword(true);
-      // Sign out immediately to prevent auto-login during password reset
-      supabase.auth.signOut();
     }
 
     // Set up auth state listener FIRST
@@ -35,16 +35,22 @@ export default function Auth() {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+
+        if (event === 'PASSWORD_RECOVERY') {
+          // User arrived via password recovery link – keep them on this page
+          setIsResettingPassword(true);
+          return;
+        }
         
-        // Redirect to admin if authenticated and not resetting password
-        if (session?.user && !isResettingPassword && event !== 'PASSWORD_RECOVERY') {
+        // Redirect to admin if authenticated and not in recovery flow
+        if (session?.user) {
           navigate("/admin");
         }
       }
     );
 
-    // THEN check for existing session (but not if resetting password)
-    if (!hashParams.get('type')) {
+    // THEN check for existing session (but not if handling recovery link)
+    if (!isRecoveryLink) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         setSession(session);
         setUser(session?.user ?? null);
