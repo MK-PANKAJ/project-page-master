@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Heart, Brain, TrendingUp, BookOpen, Users, Activity, ArrowRight, Check } from "lucide-react";
 import heroImage from "@/assets/hero-students-pets.jpg";
 import therapyPetImage from "@/assets/therapy-pet.jpg";
@@ -17,8 +18,10 @@ import progressImage from "@/assets/progress-tracking.jpg";
 
 const Home = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
+      <SEOHead />
+      <div className="min-h-screen flex flex-col">
+        <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -349,6 +352,7 @@ const Home = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

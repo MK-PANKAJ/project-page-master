@@ -10,6 +10,10 @@ import { BookingsTab } from "@/components/admin/BookingsTab";
 import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
 import { ResourcesTab } from "@/components/admin/ResourcesTab";
 import { PlansTab } from "@/components/admin/PlansTab";
+import { BlogTab } from "@/components/admin/BlogTab";
+import { GalleryAdminTab } from "@/components/admin/GalleryAdminTab";
+import { NewsletterTab } from "@/components/admin/NewsletterTab";
+import { SEOTab } from "@/components/admin/SEOTab";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Admin() {
@@ -94,12 +98,16 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="contacts" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-9 mb-8">
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
             <TabsTrigger value="resources">Resources</TabsTrigger>
             <TabsTrigger value="plans">Plans</TabsTrigger>
+            <TabsTrigger value="blog">Blog</TabsTrigger>
+            <TabsTrigger value="gallery">Gallery</TabsTrigger>
+            <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
+            <TabsTrigger value="seo">SEO</TabsTrigger>
           </TabsList>
 
           <TabsContent value="contacts">
@@ -120,6 +128,22 @@ export default function Admin() {
 
           <TabsContent value="plans">
             <PlansTab />
+          </TabsContent>
+
+          <TabsContent value="blog">
+            <BlogTab />
+          </TabsContent>
+
+          <TabsContent value="gallery">
+            <GalleryAdminTab />
+          </TabsContent>
+
+          <TabsContent value="newsletter">
+            <NewsletterTab />
+          </TabsContent>
+
+          <TabsContent value="seo">
+            <SEOTab />
           </TabsContent>
         </Tabs>
       </main>

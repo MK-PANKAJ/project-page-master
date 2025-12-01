@@ -1,5 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
+import { NewsletterForm } from "@/components/NewsletterForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -66,8 +68,13 @@ const Resources = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
+      <SEOHead 
+        title="Mental Wellness Resources - Happy Space World"
+        description="Access free mental health resources, worksheets, and guides for students"
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -251,22 +258,14 @@ const Resources = () => {
             <p className="text-xl mb-8 max-w-2xl mx-auto opacity-95">
               Subscribe to receive helpful mental health resources and updates
             </p>
-            <form className="max-w-md mx-auto flex gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg text-foreground"
-              />
-              <Button type="submit" className="bg-secondary hover:bg-secondary-dark">
-                Subscribe
-              </Button>
-            </form>
+            <NewsletterForm />
           </div>
         </section>
       </main>
 
       <Footer />
     </div>
+    </>
   );
 };
 
