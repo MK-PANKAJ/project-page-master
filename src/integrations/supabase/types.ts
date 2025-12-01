@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_config: {
+        Row: {
+          admin_email: string
+          id: number
+          updated_at: string | null
+        }
+        Insert: {
+          admin_email: string
+          id?: number
+          updated_at?: string | null
+        }
+        Update: {
+          admin_email?: string
+          id?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_id: string | null
