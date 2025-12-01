@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ImageUpload } from "./ImageUpload";
 
 interface Testimonial {
   id: string;
@@ -32,6 +33,7 @@ export function TestimonialsTab() {
     content: "",
     rating: 5,
     is_featured: false,
+    image_url: null as string | null,
   });
   const { toast } = useToast();
 
@@ -82,7 +84,7 @@ export function TestimonialsTab() {
 
       setDialogOpen(false);
       setEditingId(null);
-      setFormData({ name: "", role: "", content: "", rating: 5, is_featured: false });
+      setFormData({ name: "", role: "", content: "", rating: 5, is_featured: false, image_url: null });
       fetchTestimonials();
     } catch (error: any) {
       toast({
@@ -122,6 +124,7 @@ export function TestimonialsTab() {
       content: testimonial.content,
       rating: testimonial.rating || 5,
       is_featured: testimonial.is_featured,
+      image_url: testimonial.image_url,
     });
     setDialogOpen(true);
   };
@@ -138,7 +141,7 @@ export function TestimonialsTab() {
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingId(null);
-              setFormData({ name: "", role: "", content: "", rating: 5, is_featured: false });
+              setFormData({ name: "", role: "", content: "", rating: 5, is_featured: false, image_url: null });
             }}>
               <Plus className="mr-2 h-4 w-4" />
               Add Testimonial
@@ -149,6 +152,13 @@ export function TestimonialsTab() {
               <DialogTitle>{editingId ? "Edit" : "Add"} Testimonial</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <ImageUpload
+                bucket="testimonial-images"
+                currentUrl={formData.image_url}
+                onUploadComplete={(url) => setFormData({ ...formData, image_url: url })}
+                onRemove={() => setFormData({ ...formData, image_url: null })}
+                label="Profile Image"
+              />
               <div>
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -156,6 +166,7 @@ export function TestimonialsTab() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
+                  maxLength={100}
                 />
               </div>
               <div>
@@ -165,6 +176,7 @@ export function TestimonialsTab() {
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   placeholder="e.g., Student, Parent, Teacher"
+                  maxLength={100}
                 />
               </div>
               <div>
@@ -175,7 +187,11 @@ export function TestimonialsTab() {
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   required
                   rows={4}
+                  maxLength={500}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.content.length}/500 characters
+                </p>
               </div>
               <div>
                 <Label htmlFor="rating">Rating (1-5)</Label>

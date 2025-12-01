@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { FileUpload } from "./FileUpload";
+import { ImageUpload } from "./ImageUpload";
 
 interface Resource {
   id: string;
@@ -32,7 +34,8 @@ export function ResourcesTab() {
     title: "",
     description: "",
     category: "worksheet" as const,
-    file_url: "",
+    file_url: null as string | null,
+    thumbnail_url: null as string | null,
     is_active: true,
   });
   const { toast } = useToast();
@@ -84,7 +87,7 @@ export function ResourcesTab() {
 
       setDialogOpen(false);
       setEditingId(null);
-      setFormData({ title: "", description: "", category: "worksheet", file_url: "", is_active: true });
+      setFormData({ title: "", description: "", category: "worksheet", file_url: null, thumbnail_url: null, is_active: true });
       fetchResources();
     } catch (error: any) {
       toast({
@@ -122,7 +125,8 @@ export function ResourcesTab() {
       title: resource.title,
       description: resource.description || "",
       category: resource.category as any,
-      file_url: resource.file_url || "",
+      file_url: resource.file_url,
+      thumbnail_url: resource.thumbnail_url,
       is_active: resource.is_active,
     });
     setDialogOpen(true);
@@ -140,7 +144,7 @@ export function ResourcesTab() {
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingId(null);
-              setFormData({ title: "", description: "", category: "worksheet", file_url: "", is_active: true });
+              setFormData({ title: "", description: "", category: "worksheet", file_url: null, thumbnail_url: null, is_active: true });
             }}>
               <Plus className="mr-2 h-4 w-4" />
               Add Resource
@@ -158,6 +162,7 @@ export function ResourcesTab() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
+                  maxLength={200}
                 />
               </div>
               <div>
@@ -167,7 +172,11 @@ export function ResourcesTab() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
+                  maxLength={500}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.description.length}/500 characters
+                </p>
               </div>
               <div>
                 <Label htmlFor="category">Category</Label>
@@ -184,15 +193,22 @@ export function ResourcesTab() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="file_url">File URL</Label>
-                <Input
-                  id="file_url"
-                  value={formData.file_url}
-                  onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
-                  placeholder="https://..."
-                />
-              </div>
+              <ImageUpload
+                bucket="resource-files"
+                currentUrl={formData.thumbnail_url}
+                onUploadComplete={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                onRemove={() => setFormData({ ...formData, thumbnail_url: null })}
+                label="Thumbnail Image (Optional)"
+              />
+              <FileUpload
+                bucket="resource-files"
+                currentUrl={formData.file_url}
+                onUploadComplete={(url) => setFormData({ ...formData, file_url: url })}
+                onRemove={() => setFormData({ ...formData, file_url: null })}
+                label="Resource File"
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip"
+                maxSizeMB={10}
+              />
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
