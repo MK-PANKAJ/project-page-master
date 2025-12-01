@@ -243,7 +243,7 @@ export function BlogTab() {
               </div>
 
               <ImageUpload
-                bucket="resource-files"
+                bucket="blog-images"
                 currentUrl={formData.cover_image_url}
                 onUploadComplete={(url) => setFormData({ ...formData, cover_image_url: url })}
                 onRemove={() => setFormData({ ...formData, cover_image_url: null })}
@@ -305,7 +305,7 @@ export function BlogTab() {
                     />
                   </div>
                   <ImageUpload
-                    bucket="resource-files"
+                    bucket="blog-images"
                     currentUrl={formData.og_image}
                     onUploadComplete={(url) => setFormData({ ...formData, og_image: url })}
                     onRemove={() => setFormData({ ...formData, og_image: null })}
