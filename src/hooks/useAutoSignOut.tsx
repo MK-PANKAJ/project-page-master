@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 const WARNING_TIME = 2 * 60 * 1000; // 2 minutes before timeout
 
 export const useAutoSignOut = () => {
