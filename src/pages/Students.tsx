@@ -7,6 +7,7 @@ import { User, Users, BookOpen, Calendar, TrendingUp, Award } from "lucide-react
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEOHead } from "@/components/SEOHead";
 
 interface Plan {
   id: string;
@@ -48,8 +49,13 @@ const Students = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
+      <SEOHead
+        title="For Students - Happy Space World"
+        description="Personalized counseling, pet therapy sessions, and digital resources to support your mental wellness journey. Track progress and build confidence."
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -60,7 +66,7 @@ const Students = () => {
               Track your progress, celebrate your success, and discover your path to calm and confidence
             </p>
             <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark">
-              <Link to="/contact#booking">Book Your First Session</Link>
+              <Link to="/contact?type=student&source=booking">Book Your First Session</Link>
             </Button>
           </div>
         </section>
@@ -90,7 +96,7 @@ const Students = () => {
                     <li>• Confidential & supportive</li>
                   </ul>
                   <Button asChild className="w-full">
-                    <Link to="/contact#booking">Book Session</Link>
+                    <Link to="/contact?type=student&source=booking">Book Session</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -112,7 +118,7 @@ const Students = () => {
                     <li>• Interactive & fun activities</li>
                   </ul>
                   <Button asChild className="w-full bg-secondary hover:bg-secondary-dark">
-                    <Link to="/contact#booking">Join Program</Link>
+                    <Link to="/contact?type=student&source=booking">Join Program</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -251,7 +257,7 @@ const Students = () => {
                     ))}
                   </ul>
                   <Button asChild className="w-full" size="lg">
-                    <Link to="/contact#booking">Get Started Today</Link>
+                    <Link to="/contact?type=student&source=booking">Get Started Today</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -278,14 +284,15 @@ const Students = () => {
               Join Happy Space World today and discover a calmer, more confident you
             </p>
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-              <Link to="/contact#booking">Book Your First Session</Link>
+              <Link to="/contact?type=student&source=booking">Book Your First Session</Link>
             </Button>
           </div>
         </section>
       </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 

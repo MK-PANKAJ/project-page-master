@@ -7,6 +7,7 @@ import { Award, TrendingUp, Users, FileCheck, Star, CheckCircle2 } from "lucide-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEOHead } from "@/components/SEOHead";
 
 interface Plan {
   id: string;
@@ -48,8 +49,13 @@ const Schools = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
+      <SEOHead
+        title="For Schools - Happy Space World"
+        description="Transform your school's mental wellness with our certification programs. Proven results: 92% happiness improvement, 87% stress reduction."
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -62,7 +68,7 @@ const Schools = () => {
               Make your school a mental wellness pioneer with Happy Space World certification and programs
             </p>
             <Button asChild size="lg" className="bg-secondary hover:bg-secondary-dark">
-              <Link to="/contact">Request School Demo</Link>
+              <Link to="/contact?type=school&source=demo">Request School Demo</Link>
             </Button>
           </div>
         </section>
@@ -302,7 +308,7 @@ const Schools = () => {
                           variant={isRecommended ? "default" : "outline"} 
                           className={isRecommended ? "w-full bg-secondary hover:bg-secondary-dark" : "w-full"}
                         >
-                          <Link to="/contact">
+                          <Link to={`/contact?type=school&source=${plan.price && plan.price > 0 ? 'pricing' : 'quote'}`}>
                             {plan.price && plan.price > 0 ? `Choose ${plan.name.split(' ')[0]}` : 'Request Quote'}
                           </Link>
                         </Button>
@@ -404,6 +410,7 @@ const Schools = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 
