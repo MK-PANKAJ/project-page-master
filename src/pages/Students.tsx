@@ -81,7 +81,7 @@ const Students = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Personalized guidance from Sivaram Raghavan's network of trained counselors
+                    Personalized guidance from network of trained counselors
                   </p>
                   <ul className="space-y-2 text-sm text-muted-foreground mb-6">
                     <li>• Duration: 45-60 minutes</li>
@@ -111,7 +111,7 @@ const Students = () => {
                     <li>• Interactive & fun activities</li>
                   </ul>
                   <Button asChild className="w-full bg-secondary hover:bg-secondary-dark">
-                    <Link to="/contact?type=student&source=booking#contact-form">Join Program</Link>
+                    <Link to="/contact?type=student&source=plan#contact-form">Join Program</Link>
                   </Button>
                 </CardContent>
               </Card>
