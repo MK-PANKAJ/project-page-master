@@ -16,27 +16,26 @@ interface Plan {
   price: number | null;
   features: string[] | any;
   contact_message: string | null;
+  display_order: number | null;
 }
 
 const Students = () => {
-  const { data: plan, isLoading: loading } = useQuery({
+  const { data: plans = [], isLoading: loading } = useQuery({
     queryKey: ['student-plan'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('plans')
         .select('*')
-        .eq('plan_type', 'student')
+        .in('plan_type', ['student', 'both'])
         .eq('is_active', true)
-        .maybeSingle();
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
-      
-      if (!data) return null;
-      
-      return {
-        ...data,
-        features: Array.isArray(data.features) ? data.features : []
-      } as Plan;
+
+      return (data || []).map((plan) => ({
+        ...plan,
+        features: Array.isArray(plan.features) ? plan.features : [],
+      })) as Plan[];
     },
     staleTime: 0, // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
@@ -226,39 +225,43 @@ const Students = () => {
                   <Skeleton className="h-12 w-full" />
                 </CardContent>
               </Card>
-            ) : plan ? (
-              <Card className="max-w-md mx-auto border-2 border-primary">
-                <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-3xl font-bold text-foreground">{plan.name}</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-5xl font-bold text-primary">
-                      {plan.price ? `₹${plan.price.toLocaleString()}` : 'Contact Us'}
-                    </span>
-                    <span className="text-muted-foreground"> / student</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                          <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button asChild className="w-full" size="lg">
-                    <Link 
-                      to={`/contact?type=student&source=plan${plan.contact_message ? '&planId=' + plan.id : ''}`}
-                    >
-                      Get Started Today
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+            ) : plans.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {plans.map((plan) => (
+                  <Card key={plan.id} className="border-2 border-primary">
+                    <CardHeader className="text-center pb-8">
+                      <CardTitle className="text-3xl font-bold text-foreground">{plan.name}</CardTitle>
+                      <div className="mt-4">
+                        <span className="text-5xl font-bold text-primary">
+                          {plan.price ? `₹${plan.price.toLocaleString()}` : 'Contact Us'}
+                        </span>
+                        <span className="text-muted-foreground"> / student</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-4 mb-8">
+                        {plan.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
+                              <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <span className="text-muted-foreground">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button asChild className="w-full" size="lg">
+                        <Link
+                          to={`/contact?type=student&source=plan${plan.contact_message ? '&planId=' + plan.id : ''}`}
+                        >
+                          Get Started Today
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             ) : (
               <Card className="max-w-md mx-auto">
                 <CardContent className="py-12 text-center">

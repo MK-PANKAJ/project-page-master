@@ -26,7 +26,7 @@ const Schools = () => {
       const { data, error } = await supabase
         .from('plans')
         .select('*')
-        .eq('plan_type', 'school')
+        .in('plan_type', ['school', 'both'])
         .eq('is_active', true)
         .order('display_order', { ascending: true });
 
