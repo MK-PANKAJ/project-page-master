@@ -322,6 +322,7 @@ export type Database = {
       }
       resources: {
         Row: {
+          audience: string | null
           category: string
           created_at: string | null
           description: string | null
@@ -334,6 +335,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          audience?: string | null
           category: string
           created_at?: string | null
           description?: string | null
@@ -346,6 +348,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          audience?: string | null
           category?: string
           created_at?: string | null
           description?: string | null
