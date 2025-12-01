@@ -1,29 +1,36 @@
 import { useState } from "react";
+import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Loader2 } from "lucide-react";
 
+const emailSchema = z.object({
+  email: z.string().email("Invalid email address").toLowerCase(),
+  honeypot: z.string().max(0, "Invalid submission")
+});
+
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address",
-        variant: "destructive",
-      });
+    // Honeypot check - if filled, it's likely a bot
+    if (honeypot) {
+      console.warn("Bot detected via honeypot");
       return;
     }
-
+    
     setLoading(true);
 
     try {
+      // Validate email
+      const validated = emailSchema.parse({ email, honeypot });
+
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/subscribe-newsletter`,
         {
@@ -31,7 +38,7 @@ export function NewsletterForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email: validated.email }),
         }
       );
 
@@ -53,11 +60,19 @@ export function NewsletterForm() {
         throw new Error(data.error || "Failed to subscribe");
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to subscribe. Please try again.",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Invalid Email",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to subscribe. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -76,6 +91,22 @@ export function NewsletterForm() {
           disabled={loading}
           required
           aria-label="Email address for newsletter"
+        />
+        {/* Honeypot field - hidden from users but visible to bots */}
+        <input
+          type="text"
+          name="website"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+          style={{
+            position: 'absolute',
+            left: '-9999px',
+            width: '1px',
+            height: '1px'
+          }}
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
         />
       </div>
       <Button type="submit" disabled={loading} className="min-w-[120px]">
