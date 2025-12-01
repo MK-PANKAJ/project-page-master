@@ -4,8 +4,49 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Award, TrendingUp, Users, FileCheck, Star, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface Plan {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number | null;
+  features: string[] | any;
+  display_order: number | null;
+}
 
 const Schools = () => {
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('plans')
+        .select('*')
+        .eq('plan_type', 'school')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      const plansData = (data || []).map(plan => ({
+        ...plan,
+        features: Array.isArray(plan.features) ? plan.features : []
+      }));
+      setPlans(plansData);
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -207,109 +248,70 @@ const Schools = () => {
               Choose the package that fits your school's needs
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <Card className="border-border">
-                <CardHeader>
-                  <CardTitle className="text-2xl">Starter Program</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-primary">₹1,05,000</span>
-                    <p className="text-sm text-muted-foreground mt-2">Single batch (30 students)</p>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">6-week program</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Pet therapy sessions</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Expert counseling</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Wellness questionnaires</span>
-                    </li>
-                  </ul>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to="/contact">Choose Starter</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 border-secondary shadow-xl">
-                <div className="bg-secondary text-white text-center py-2 text-sm font-semibold">
-                  RECOMMENDED
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-2xl">Growth Program</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-primary">₹2,10,000+</span>
-                    <p className="text-sm text-muted-foreground mt-2">Multiple batches (60-90 students)</p>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">All Starter features</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">School certification</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Annual wellness report</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Bulk discount pricing</span>
-                    </li>
-                  </ul>
-                  <Button asChild className="w-full bg-secondary hover:bg-secondary-dark">
-                    <Link to="/contact">Choose Growth</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border">
-                <CardHeader>
-                  <CardTitle className="text-2xl">Premium Program</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-primary">Custom</span>
-                    <p className="text-sm text-muted-foreground mt-2">School-wide (90+ students)</p>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">All Growth features</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Staff training workshops</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Parent engagement sessions</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Media campaign support</span>
-                    </li>
-                  </ul>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to="/contact">Request Quote</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardHeader>
+                      <Skeleton className="h-8 w-40 mb-4" />
+                      <Skeleton className="h-12 w-32" />
+                      <Skeleton className="h-4 w-48 mt-2" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 mb-6">
+                        {Array.from({ length: 4 }).map((_, j) => (
+                          <Skeleton key={j} className="h-4 w-full" />
+                        ))}
+                      </div>
+                      <Skeleton className="h-10 w-full" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {plans.map((plan, index) => {
+                  const isRecommended = index === 1;
+                  return (
+                    <Card key={plan.id} className={isRecommended ? "border-2 border-secondary shadow-xl" : "border-border"}>
+                      {isRecommended && (
+                        <div className="bg-secondary text-white text-center py-2 text-sm font-semibold">
+                          RECOMMENDED
+                        </div>
+                      )}
+                      <CardHeader>
+                        <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                        <div className="mt-4">
+                          <span className="text-4xl font-bold text-primary">
+                            {plan.price && plan.price > 0 ? `₹${plan.price.toLocaleString()}${plan.name.includes('Growth') ? '+' : ''}` : 'Custom'}
+                          </span>
+                          <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-3 mb-6">
+                          {plan.features.map((feature, i) => (
+                            <li key={i} className="flex items-start">
+                              <CheckCircle2 className="h-5 w-5 text-success mr-2 flex-shrink-0 mt-0.5" />
+                              <span className="text-sm text-muted-foreground">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <Button 
+                          asChild 
+                          variant={isRecommended ? "default" : "outline"} 
+                          className={isRecommended ? "w-full bg-secondary hover:bg-secondary-dark" : "w-full"}
+                        >
+                          <Link to="/contact">
+                            {plan.price && plan.price > 0 ? `Choose ${plan.name.split(' ')[0]}` : 'Request Quote'}
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 

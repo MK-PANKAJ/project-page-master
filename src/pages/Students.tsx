@@ -4,8 +4,49 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { User, Users, BookOpen, Calendar, TrendingUp, Award } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface Plan {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number | null;
+  features: string[] | any;
+}
 
 const Students = () => {
+  const [plan, setPlan] = useState<Plan | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPlan();
+  }, []);
+
+  const fetchPlan = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('plans')
+        .select('*')
+        .eq('plan_type', 'student')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) {
+        setPlan({
+          ...data,
+          features: Array.isArray(data.features) ? data.features : []
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching plan:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -170,62 +211,60 @@ const Students = () => {
               Invest in your mental wellness with our comprehensive program
             </p>
             
-            <Card className="max-w-md mx-auto border-2 border-primary">
-              <CardHeader className="text-center pb-8">
-                <CardTitle className="text-3xl font-bold text-foreground">Student Package</CardTitle>
-                <div className="mt-4">
-                  <span className="text-5xl font-bold text-primary">₹3,500</span>
-                  <span className="text-muted-foreground"> / student</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-start">
-                    <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Expert counseling sessions</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Pet therapy activities</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Happiness & stress questionnaires</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Progress tracking dashboard</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Digital resources access</span>
-                  </li>
-                </ul>
-                <Button asChild className="w-full" size="lg">
-                  <Link to="/contact#booking">Get Started Today</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            {loading ? (
+              <Card className="max-w-md mx-auto border-2 border-primary">
+                <CardHeader className="text-center pb-8">
+                  <Skeleton className="h-10 w-48 mx-auto mb-4" />
+                  <Skeleton className="h-14 w-32 mx-auto" />
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4 mb-8">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton key={i} className="h-6 w-full" />
+                    ))}
+                  </div>
+                  <Skeleton className="h-12 w-full" />
+                </CardContent>
+              </Card>
+            ) : plan ? (
+              <Card className="max-w-md mx-auto border-2 border-primary">
+                <CardHeader className="text-center pb-8">
+                  <CardTitle className="text-3xl font-bold text-foreground">{plan.name}</CardTitle>
+                  <div className="mt-4">
+                    <span className="text-5xl font-bold text-primary">
+                      {plan.price ? `₹${plan.price.toLocaleString()}` : 'Contact Us'}
+                    </span>
+                    <span className="text-muted-foreground"> / student</span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-4 mb-8">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="w-6 h-6 bg-success/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
+                          <svg className="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button asChild className="w-full" size="lg">
+                    <Link to="/contact#booking">Get Started Today</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="max-w-md mx-auto">
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">No pricing plan available. Please contact us for details.</p>
+                  <Button asChild className="mt-4">
+                    <Link to="/contact">Contact Us</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </section>
 
