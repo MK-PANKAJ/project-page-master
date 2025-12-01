@@ -14,6 +14,7 @@ import { BlogTab } from "@/components/admin/BlogTab";
 import { GalleryAdminTab } from "@/components/admin/GalleryAdminTab";
 import { NewsletterTab } from "@/components/admin/NewsletterTab";
 import { SEOTab } from "@/components/admin/SEOTab";
+import { AnnouncementsTab } from "@/components/admin/AnnouncementsTab";
 import { useToast } from "@/hooks/use-toast";
 import { useAutoSignOut } from "@/hooks/useAutoSignOut";
 
@@ -102,7 +103,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="contacts" className="w-full">
-          <TabsList className="grid w-full grid-cols-9 mb-8">
+          <TabsList className="grid w-full grid-cols-10 mb-8">
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
@@ -112,6 +113,7 @@ export default function Admin() {
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="announcements">Announcements</TabsTrigger>
           </TabsList>
 
           <TabsContent value="contacts">
@@ -148,6 +150,10 @@ export default function Admin() {
 
           <TabsContent value="seo">
             <SEOTab />
+          </TabsContent>
+
+          <TabsContent value="announcements">
+            <AnnouncementsTab />
           </TabsContent>
         </Tabs>
       </main>
