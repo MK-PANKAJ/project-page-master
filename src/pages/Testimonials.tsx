@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEOHead } from "@/components/SEOHead";
 
 interface Testimonial {
   id: string;
@@ -56,8 +57,13 @@ const Testimonials = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
+      <SEOHead
+        title="Testimonials - Happy Space World"
+        description="Read what students, parents, and educators say about our mental wellness programs and therapy pet sessions."
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -192,6 +198,7 @@ const Testimonials = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 
