@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Award, TrendingUp, Users, FileCheck, Star, CheckCircle2 } from "lucide-react";
-import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SEOHead } from "@/components/SEOHead";
+import { useQuery } from "@tanstack/react-query";
 
 interface Plan {
   id: string;
@@ -20,15 +20,9 @@ interface Plan {
 }
 
 const Schools = () => {
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPlans();
-  }, []);
-
-  const fetchPlans = async () => {
-    try {
+  const { data: plans = [], isLoading: loading } = useQuery({
+    queryKey: ['school-plans'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('plans')
         .select('*')
@@ -37,17 +31,15 @@ const Schools = () => {
         .order('display_order', { ascending: true });
 
       if (error) throw error;
-      const plansData = (data || []).map(plan => ({
+      
+      return (data || []).map(plan => ({
         ...plan,
         features: Array.isArray(plan.features) ? plan.features : []
-      }));
-      setPlans(plansData);
-    } catch (error) {
-      console.error('Error fetching plans:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      })) as Plan[];
+    },
+    staleTime: 0, // Always refetch on mount
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+  });
 
   return (
     <>
