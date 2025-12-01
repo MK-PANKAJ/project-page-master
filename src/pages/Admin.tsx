@@ -15,6 +15,7 @@ import { GalleryAdminTab } from "@/components/admin/GalleryAdminTab";
 import { NewsletterTab } from "@/components/admin/NewsletterTab";
 import { SEOTab } from "@/components/admin/SEOTab";
 import { useToast } from "@/hooks/use-toast";
+import { useAutoSignOut } from "@/hooks/useAutoSignOut";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+  
+  // Auto sign out on inactivity or tab close
+  useAutoSignOut();
 
   useEffect(() => {
     checkAuth();
