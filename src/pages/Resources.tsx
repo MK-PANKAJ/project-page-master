@@ -329,72 +329,7 @@ const Resources = () => {
             </Tabs>
           </div>
         </section>
-
-        {/* Blog Preview Section */}
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
-              Latest from Our Blog
-            </h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Expert insights and tips for mental wellness
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div className="h-48 bg-gradient-to-br from-primary to-primary-light"></div>
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    How to Recognize Signs of Student Stress
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Early warning signs parents and teachers should watch for, and steps to take when you notice them.
-                  </p>
-                  <Button variant="link" className="px-0">
-                    Read More →
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div className="h-48 bg-gradient-to-br from-secondary to-secondary-light"></div>
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    The Science Behind Pet Therapy
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Understanding how interactions with therapy animals affect brain chemistry and emotional regulation.
-                  </p>
-                  <Button variant="link" className="px-0">
-                    Read More →
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div className="h-48 bg-gradient-to-br from-tertiary to-tertiary-light"></div>
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    5 Daily Mindfulness Practices for Teens
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Simple, practical techniques students can use anytime, anywhere to manage stress and stay grounded.
-                  </p>
-                  <Button variant="link" className="px-0">
-                    Read More →
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
+        
         {/* Newsletter Section */}
         <section className="py-20 bg-primary text-white">
           <div className="container mx-auto px-4 text-center">
