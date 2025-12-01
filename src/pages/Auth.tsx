@@ -13,9 +13,9 @@ export default function Auth() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [adminEmail, setAdminEmail] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
@@ -70,19 +70,15 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-        },
-      });
+      const { data, error } = await supabase.functions.invoke('send-admin-otp');
 
       if (error) throw error;
 
+      setAdminEmail(data.adminEmail);
       setOtpSent(true);
       toast({
         title: "OTP sent!",
-        description: "Check your email for the 6-digit code.",
+        description: "Check your admin email for the 6-digit code.",
       });
     } catch (error: any) {
       toast({
@@ -111,7 +107,7 @@ export default function Auth() {
 
     try {
       const { error } = await supabase.auth.verifyOtp({
-        email,
+        email: adminEmail,
         token: otp,
         type: 'email',
       });
@@ -174,8 +170,8 @@ export default function Auth() {
             {isResettingPassword
               ? "Enter your new password below"
               : otpSent
-                ? "Enter the 6-digit code sent to your email"
-                : "Enter your email to receive a one-time login code"}
+                ? "Enter the 6-digit code sent to your admin email"
+                : "Secure admin access with one-time code"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -231,24 +227,15 @@ export default function Auth() {
                   className="text-sm text-primary hover:underline"
                   disabled={isLoading}
                 >
-                  Use different email
+                  Request new code
                 </button>
               </div>
             </form>
           ) : (
             <form onSubmit={handleSendOTP} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+              <p className="text-center text-muted-foreground text-sm">
+                Click below to receive a one-time login code
+              </p>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Sending..." : "Send Login Code"}
               </Button>
