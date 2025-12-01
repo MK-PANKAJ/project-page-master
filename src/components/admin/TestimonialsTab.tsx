@@ -160,37 +160,45 @@ export function TestimonialsTab() {
                 label="Profile Image"
               />
               <div>
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Name (Max 60 chars - Layout Safety)</Label>
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value.slice(0, 60) })}
                   required
-                  maxLength={100}
+                  maxLength={60}
+                  placeholder="Full Name"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.name.length}/60 characters
+                </p>
               </div>
               <div>
-                <Label htmlFor="role">Role</Label>
+                <Label htmlFor="role">Role (Max 50 chars)</Label>
                 <Input
                   id="role"
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value.slice(0, 50) })}
                   placeholder="e.g., Student, Parent, Teacher"
-                  maxLength={100}
+                  maxLength={50}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.role.length}/50 characters
+                </p>
               </div>
               <div>
-                <Label htmlFor="content">Testimonial</Label>
+                <Label htmlFor="content">Testimonial (Max 300 chars - Layout Safety)</Label>
                 <Textarea
                   id="content"
                   value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, content: e.target.value.slice(0, 300) })}
                   required
                   rows={4}
-                  maxLength={500}
+                  maxLength={300}
+                  placeholder="Share your experience..."
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {formData.content.length}/500 characters
+                  {formData.content.length}/300 characters
                 </p>
               </div>
               <div>

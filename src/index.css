@@ -91,4 +91,23 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Ensure all images use object-fit: cover for consistent layout */
+  img {
+    @apply object-cover;
+  }
+
+  /* Accessibility: Minimum touch target size */
+  button,
+  a,
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Performance: Lazy loading hint */
+  img[loading="lazy"] {
+    content-visibility: auto;
+  }
 }
