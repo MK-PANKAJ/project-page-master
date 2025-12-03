@@ -1,101 +1,277 @@
-🌍 Happy Space World
+# 🌍 Happy Space World
+
 Cultivating Calm, Confidence, and Connection for Students
-Happy Space World is a full-stack mental wellness platform designed for students (Classes 8-12) and schools. It integrates expert counseling based on the "Stop, Look, Go" mindfulness model with the healing power of pet therapy.
-This repository contains the frontend application built with React and Vite, integrated with a Supabase backend for content management, authentication, and data storage.
-🚀 Features
-🌟 Public Platform
-Tailored Landing Pages: Dedicated sections for Students and Schools outlining programs and benefits.
-Resource Library: A filterable repository of worksheets, guides, and videos for Students, Parents, and Educators.
-Dynamic Blog: Content management for wellness articles with SEO optimization.
-Gallery & Testimonials: Visual showcases of pet therapy sessions and success stories.
-Interactive Forms:
-Booking System: Request forms for 1-on-1 counseling or school workshops.
-Newsletter: Subscription system with spam protection (honeypot).
-🛡️ Admin Dashboard (Protected)
-A comprehensive CMS located at /admin for managing all site content:
-Dashboard Modules:
-Contacts & Bookings: View and manage incoming inquiries.
-Content Management: CRUD operations for Blogs, Testimonials, Gallery Items, and Plans.
-Resource Center: Upload PDF/Doc files and link Google Drive resources.
-SEO Manager: Configure Meta Titles, Descriptions, and OG Images for every page path.
-Newsletter: View subscribers and export lists to CSV.
-Announcements: Toggle site-wide banner alerts.
-Authentication: Secure OTP-based login for administrators via Supabase Edge Functions.
-🛠️ Tech Stack
-Frontend
-Framework: React + TypeScript
-Build Tool: Vite
-Styling: Tailwind CSS
-UI Components: shadcn/ui (Radix UI + Tailwind)
-State Management: TanStack Query (React Query)
-Routing: React Router
-SEO: React Helmet Async
-Backend (Supabase)
-Database: PostgreSQL
-Authentication: Supabase Auth (Passwordless/OTP)
-Storage: Buckets for Blog, Gallery, and Testimonial images.
-Edge Functions:
-send-notification-email: Email triggers for new bookings via Resend.
-send-admin-otp: Custom admin authentication logic.
-subscribe-newsletter: Handling subscriptions.
-🗄️ Database Schema
-The application uses the following Supabase tables:
-blog_posts: Content, tags, and SEO metadata for articles.
-gallery_items: Images and captions for the gallery page.
-resources: Downloadable files and links categorized by audience.
-testimonials: Client feedback and ratings.
-plans: Pricing packages for students and schools.
-contact_submissions: General contact form data.
-booking_requests: Specific session requests.
-newsletter_subscriptions: Email list.
-page_metadata: Dynamic SEO settings per route.
-announcements: Site-wide alert banners.
-⚙️ Getting Started
-Prerequisites
-Node.js (v18+)
-npm or yarn
-A Supabase project
-Environment Variables
-Create a .env file in the root directory:
-VITE_SUPABASE_PROJECT_ID="your_project_id"
-VITE_SUPABASE_URL="[https://your-project-id.supabase.co](https://your-project-id.supabase.co)"
-VITE_SUPABASE_PUBLISHABLE_KEY="your_anon_key"
 
+Happy Space World is a full-stack mental wellness platform designed for students (Classes 8–12) and schools. It integrates expert counseling based on the "Stop, Look, Go" mindfulness model with the healing power of pet therapy to support emotional resilience and psychological safety in and beyond classrooms.
 
-Installation
-Clone the repository:
-git clone [https://github.com/your-repo/happy-space-world.git](https://github.com/your-repo/happy-space-world.git)
+This repository contains the **frontend application** built with React and Vite, integrated with a **Supabase** backend for content management, authentication, and data storage.
+
+---
+
+## ✨ Key Highlights
+
+- Student-first mental wellness journeys combining mindfulness, counseling, and pet-assisted interventions.
+- Dedicated experiences for Students, Parents, and Schools.
+- Full-featured admin dashboard for content, communication, and SEO.
+- Built for modern web: React + TypeScript + Tailwind + shadcn/ui, powered by Supabase.
+
+---
+
+## 🚀 Features
+
+### 🌟 Public Platform
+
+- **Tailored Landing Pages**  
+  Separate sections for **Students** and **Schools** describing programs, benefits, and outcomes in age-appropriate language.
+
+- **Resource Library**  
+  Filterable repository of:
+  - Worksheets and journaling prompts  
+  - Guides for parents and educators  
+  - Short videos and activity ideas  
+
+- **Dynamic Blog**  
+  - Wellness articles with tags and categories  
+  - SEO-optimized titles, descriptions, and slugs  
+  - Auto-updating blog listing and detail pages
+
+- **Gallery & Testimonials**  
+  - Photo and video gallery of pet therapy sessions and school programs  
+  - Testimonials from students, parents, and school partners
+
+- **Interactive Forms**  
+  - **Booking System**: Request 1‑on‑1 counseling, group circles, or school workshops.  
+  - **Newsletter**: Email subscription with basic spam protection (honeypot field).
+
+---
+
+### 🛡️ Admin Dashboard (`/admin`)
+
+A protected, CMS-style dashboard to manage all site content and communication.
+
+**Modules**
+
+- **Contacts & Bookings**
+  - View contact form submissions and booking requests.
+  - Update status and add internal notes for follow-up.
+
+- **Content Management**
+  - CRUD for:
+    - Blog posts  
+    - Testimonials  
+    - Gallery items  
+    - Plans / Programs (students, schools, bundles)
+
+- **Resource Center**
+  - Upload PDF/DOC resources to Supabase Storage.
+  - Attach Google Drive links for existing school content.
+
+- **SEO Manager**
+  - Configure per-route:
+    - Meta Title  
+    - Meta Description  
+    - OG Image URL  
+
+- **Newsletter**
+  - View all subscribers.
+  - Export subscriber list to CSV for campaigns.
+
+- **Announcements**
+  - Configure a site-wide banner (message + type).
+  - Toggle visibility for time-sensitive announcements (exams, awareness weeks, events).
+
+**Authentication**
+
+- Passwordless / OTP-based admin login using Supabase Auth and Edge Functions for custom OTP delivery and verification.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- **Framework**: React + TypeScript (Vite)
+- **Build Tool**: Vite dev server and bundler
+- **Styling**: Tailwind CSS utility-first styling
+- **UI Components**: shadcn/ui (Radix UI + Tailwind-based components)
+- **State & Data**: TanStack Query (React Query) for server state and caching
+- **Routing**: React Router for SPA routing
+- **SEO**: React Helmet Async for meta and head management
+
+### Backend (Supabase)
+
+- **Database**: PostgreSQL managed by Supabase
+- **Auth**: Supabase Auth (OTP/passwordless for admins)
+- **Storage**: Supabase Storage buckets for:
+  - Blog cover images
+  - Gallery images
+  - Testimonial avatars
+- **Edge Functions** (examples):
+  - `send-notification-email`: Trigger transactional emails on new bookings via providers like Resend.
+  - `send-admin-otp`: Custom admin login flow using OTP.
+  - `subscribe-newsletter`: Securely handle newsletter subscriptions and duplicate checks.
+
+---
+
+## 🗄️ Database Schema (Supabase)
+
+The app expects the following tables (names can be adjusted via config, but these are the defaults):
+
+- **`blog_posts`**
+  - `id`, `title`, `slug`, `content`, `tags`, `cover_image_url`
+  - `seo_title`, `seo_description`, `published_at`, `is_published`
+
+- **`gallery_items`**
+  - `id`, `image_url`, `caption`, `category`, `order_index`
+
+- **`resources`**
+  - `id`, `title`, `description`, `audience` (`student` | `parent` | `educator`)
+  - `file_url`, `drive_link`, `tags`
+
+- **`testimonials`**
+  - `id`, `name`, `role` (Student/Parent/Teacher/School Leader)
+  - `message`, `rating`, `avatar_url`
+
+- **`plans`**
+  - `id`, `name`, `description`, `target_audience`
+  - `price`, `features` (JSON/array), `is_featured`
+
+- **`contact_submissions`**
+  - `id`, `name`, `email`, `phone`, `message`, `source_page`
+
+- **`booking_requests`**
+  - `id`, `name`, `email`, `phone`, `organization`
+  - `requested_service`, `preferred_dates`, `notes`, `status`
+
+- **`newsletter_subscriptions`**
+  - `id`, `email`, `source`, `created_at`
+
+- **`page_metadata`**
+  - `id`, `path`, `meta_title`, `meta_description`, `og_image_url`
+
+- **`announcements`**
+  - `id`, `message`, `type`, `is_active`, `start_at`, `end_at`
+
+Supabase automatically exposes type-safe APIs over these tables that can be consumed from the React app.
+
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+
+- Node.js **v18+**
+- `npm`, `pnpm`, or `yarn`
+- A Supabase project with:
+  - Database
+  - Auth configured
+  - Storage buckets for images/resources
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/happy-space-world.git
 cd happy-space-world
+```
 
+> Replace `your-username` and repo URL with your own GitHub repository.
 
-Install dependencies:
+### 2. Install Dependencies
+
+```bash
 npm install
 # or
-bun install
+yarn install
+# or
+pnpm install
+```
 
+### 3. Configure Environment Variables
 
-Run Development Server:
+Create a `.env` file in the project root:
+
+```bash
+VITE_SUPABASE_PROJECT_ID="your_project_id"
+VITE_SUPABASE_URL="https://your-project-id.supabase.co"
+VITE_SUPABASE_PUBLISHABLE_KEY="your_anon_key"
+```
+
+You can obtain these values from your Supabase project settings and API keys page.
+
+### 4. Run the Development Server
+
+```bash
 npm run dev
+```
 
-The app will start at http://localhost:8080.
-🏗️ Project Structure
+By default, Vite will start the app at `http://localhost:5173` (or the port configured in your Vite setup).
+
+---
+
+## 🏗️ Project Structure
+
+```txt
 src/
-├── assets/             # Static images
+├── assets/             # Static images and icons
 ├── components/
-│   ├── admin/          # Dashboard specific components (Tabs, Uploaders)
-│   ├── layout/         # Header, Footer
-│   ├── ui/             # shadcn/ui reusable components
-│   └── ...
-├── hooks/              # Custom hooks (useToast, useAutoSignOut)
-├── integrations/       # Supabase client setup
-├── lib/                # Utilities (cn, image optimization)
-├── pages/              # Route components (Home, Admin, Blog, etc.)
-└── ...
+│   ├── admin/          # Dashboard-specific components (tables, forms, uploaders)
+│   ├── layout/         # Header, Footer, Layout wrappers
+│   ├── ui/             # shadcn/ui reusable primitives
+│   └── common/         # Shared widgets (cards, sections, etc.)
+├── hooks/              # Custom hooks (e.g., useToast, useAutoSignOut)
+├── integrations/       # Supabase client, API bindings
+├── lib/                # Utilities (cn, formatting, image helpers)
+├── pages/              # Route components (Home, Blog, Admin, Resources, etc.)
+└── main.tsx            # App bootstrap and routing
+```
 
+This structure follows common React + Vite conventions for clarity and scalability.
 
-📦 Deployment
-The project is configured for deployment on static hosting services like GitHub Pages or Vercel.
-Build for Production:
+---
+
+## 📦 Deployment
+
+The app can be deployed to any static hosting provider that supports SPA routing, such as **Vercel**, **Netlify**, or **GitHub Pages**.
+
+### Production Build
+
+```bash
 npm run build
+```
 
+This generates an optimized production bundle in the `dist/` directory. You can then:
 
+- Deploy to **Vercel** by connecting your GitHub repo and selecting the Vite framework preset.
+- Deploy to **Netlify** with a build command of `npm run build` and publish directory `dist`.
+- Deploy to **GitHub Pages** via GitHub Actions or manual upload.
+
+---
+
+## 🤝 Contributing
+
+Contributions that improve stability, accessibility, or student experience are welcome.
+
+1. Fork the repository.
+2. Create a feature branch:  
+   `git checkout -b feature/amazing-feature`
+3. Commit your changes with clear messages.
+4. Push the branch:  
+   `git push origin feature/amazing-feature`
+5. Open a Pull Request with a short description and screenshots if relevant.
+
+---
+
+## 📄 License
+
+This project is open source under the **MIT License**.  
+See the `LICENSE` file in the repository for full terms.
+
+---
+
+## 💙 Acknowledgments
+
+- Students, parents, and educators who prioritize mental wellness in academic spaces.
+- Supabase for the Postgres + Auth + Storage platform that powers the backend.
+- The React, Vite, Tailwind, and shadcn/ui communities for excellent tooling and documentation.
+
+Let's build calmer, kinder learning spaces together. 🌱
