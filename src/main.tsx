@@ -1,57 +1,17 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route } from "react-router-dom"; // REMOVED BrowserRouter import
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AnnouncementBanner } from "@/components/AnnouncementBanner";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Students from "./pages/Students";
-import Schools from "./pages/Schools";
-import Resources from "./pages/Resources";
-import Contact from "./pages/Contact";
-import Gallery from "./pages/Gallery";
-import Testimonials from "./pages/Testimonials";
-import Auth from "./pages/Auth";
-import Admin from "./pages/Admin";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import NotFound from "./pages/NotFound";
+import React from 'react';
+import { createRoot } from "react-dom/client";
+import { HashRouter } from 'react-router-dom'; 
+import { HelmetProvider } from "react-helmet-async";
+import App from "./App.tsx";
+import "./index.css";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        {/* REMOVED: <BrowserRouter> 
-           We removed the BrowserRouter here because the app is already wrapped 
-           in HashRouter in main.tsx. 
-        */}
-          <AnnouncementBanner />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/students" element={<Students />} />
-            <Route path="/schools" element={<Schools />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/testimonials" element={<Testimonials />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/admin" element={<Admin />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        {/* REMOVED: </BrowserRouter> */}
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <HelmetProvider>
+      {/* HashRouter works on both Vercel and GitHub Pages without extra config */}
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </HelmetProvider>
+  </React.StrictMode>
 );
-
-export default App;
