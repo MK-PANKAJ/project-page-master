@@ -268,6 +268,7 @@ Contributions that improve stability, accessibility, or student experience are w
 
 This project is open source under the **MIT License**.  
 See the `LICENSE` file in the repository for full terms.
+
 ---
 
 ## 💙 Acknowledgments
