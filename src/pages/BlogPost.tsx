@@ -4,9 +4,28 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
-// Added social icons
-import { Calendar, Tag, ArrowLeft, Share2, Facebook, Twitter, Linkedin } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  Calendar, 
+  Tag, 
+  ArrowLeft, 
+  Share2, 
+  Copy, 
+  Check, 
+  Facebook, 
+  Twitter, 
+  Linkedin, 
+  MessageCircle,
+  Link as LinkIcon
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 interface BlogPost {
   id: string;
@@ -15,6 +34,7 @@ interface BlogPost {
   cover_image_url: string | null;
   tags: string[] | null;
   published_at: string;
+  excerpt: string | null;
   meta_title: string | null;
   meta_description: string | null;
   og_image: string | null;
@@ -22,8 +42,11 @@ interface BlogPost {
 
 export default function BlogPost() {
   const { slug } = useParams();
+  const isMobile = useIsMobile();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (slug) {
@@ -46,6 +69,54 @@ export default function BlogPost() {
       console.error("Error fetching blog post:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // --- Sharing Logic ---
+
+  // 1. Native Share (Mobile)
+  const handleNativeShare = async () => {
+    if (post && navigator.share) {
+      try {
+        await navigator.share({
+          title: post.title,
+          text: post.excerpt || "Read this article on Happy Space World",
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log("Error sharing:", error);
+      }
+    } else {
+      // Fallback for mobile browsers that might not support it (rare)
+      handleCopyLink();
+    }
+  };
+
+  // 2. Copy Link
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    toast({
+      title: "Link Copied",
+      description: "Article link copied to clipboard",
+    });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // 3. Social Share Helpers (Desktop)
+  const shareLinks = {
+    whatsapp: () => {
+      const text = encodeURIComponent(`${post?.title}\n\nRead more at: ${window.location.href}`);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    },
+    facebook: () => {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+    },
+    twitter: () => {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post?.title || '')}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+    },
+    linkedin: () => {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank');
     }
   };
 
@@ -134,38 +205,57 @@ export default function BlogPost() {
               {post.content}
             </div>
 
-            {/* Social Sharing Section */}
-            <div className="mt-12 pt-8 border-t">
-              <div className="flex items-center gap-4">
+            {/* --- All-in-One Share Section --- */}
+            <div className="mt-12 pt-8 border-t border-border">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Share2 className="h-5 w-5" />
-                  <span className="font-medium">Share this post:</span>
+                  <span className="font-semibold text-foreground">Share this article</span>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
-                    title="Share on Facebook"
-                  >
-                    <Facebook className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`, '_blank')}
-                    title="Share on Twitter"
-                  >
-                    <Twitter className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank')}
-                    title="Share on LinkedIn"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                  </Button>
+                
+                <div>
+                  {isMobile ? (
+                    /* Mobile: Single Button triggering Native Share Sheet */
+                    <Button 
+                      onClick={handleNativeShare} 
+                      className="bg-primary hover:bg-primary-dark text-white font-medium min-w-[140px]"
+                    >
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                  ) : (
+                    /* Desktop: Dropdown Menu with all options */
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button className="bg-primary hover:bg-primary-dark text-white font-medium min-w-[140px]">
+                          <Share2 className="mr-2 h-4 w-4" />
+                          Share
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+                          {copied ? <Check className="mr-2 h-4 w-4 text-green-500" /> : <Copy className="mr-2 h-4 w-4" />}
+                          Copy Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={shareLinks.whatsapp} className="cursor-pointer">
+                          <MessageCircle className="mr-2 h-4 w-4 text-green-600" />
+                          WhatsApp
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={shareLinks.facebook} className="cursor-pointer">
+                          <Facebook className="mr-2 h-4 w-4 text-blue-600" />
+                          Facebook
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={shareLinks.twitter} className="cursor-pointer">
+                          <Twitter className="mr-2 h-4 w-4 text-blue-400" />
+                          Twitter
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={shareLinks.linkedin} className="cursor-pointer">
+                          <Linkedin className="mr-2 h-4 w-4 text-blue-700" />
+                          LinkedIn
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
               </div>
             </div>
@@ -175,4 +265,4 @@ export default function BlogPost() {
       </div>
     </>
   );
-                }
+        }
