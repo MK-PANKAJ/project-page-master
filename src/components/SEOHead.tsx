@@ -32,9 +32,8 @@ export function SEOHead({ title, description, image, type = "website", preloadIm
   }, [location.pathname]);
 
   const defaultTitle = "Happy Space World – Student Mental Wellness";
-  
-  const defaultDescription = "Cultivating calm, confidence and connection through expert counseling and pet therapy for students in Classes 8-12. Expert guidance grounded in mindfulness and empathy.";
-  
+  // UPDATED: Shortened description to fit within 1000px/160chars limit
+  const defaultDescription = "Expert counseling and pet therapy for students (Classes 8-12). Cultivating calm, confidence, and connection through mindfulness.";
   const defaultImage = `${window.location.origin}/happy-space-og.png`;
 
   const finalTitle = pageMetadata?.meta_title || title || defaultTitle;
@@ -84,4 +83,4 @@ export function SEOHead({ title, description, image, type = "website", preloadIm
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     </Helmet>
   );
-      }
+}
