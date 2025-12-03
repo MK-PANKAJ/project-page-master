@@ -2,12 +2,17 @@
 
 Cultivating Calm, Confidence, and Connection for Students
 
-Happy Space World is a full-stack mental wellness platform designed for students (Classes 8–12) and schools. It integrates expert counseling based on the "Stop, Look, Go" mindfulness model with the healing power of pet therapy to support emotional resilience and psychological safety in and beyond classrooms.
+Happy Space World is a full-stack mental wellness platform designed for students (Classes 8–12) and schools. It integrates expert counseling based on the mindfulness model with the healing power of pet therapy to support emotional resilience and psychological safety in and beyond classrooms.
 
 This repository contains the **frontend application** built with React and Vite, integrated with a **Supabase** backend for content management, authentication, and data storage.
 
 ---
 
+
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/bf727e43-8ac5-4cfa-8e85-a28920bff8e1" />
+Built with React, Supabase, and tooling such as [Lovable](https://lovable.dev) to speed up development.
+
+---
 ## ✨ Key Highlights
 
 - Student-first mental wellness journeys combining mindfulness, counseling, and pet-assisted interventions.
@@ -203,7 +208,7 @@ You can obtain these values from your Supabase project settings and API keys pag
 npm run dev
 ```
 
-By default, Vite will start the app at `http://localhost:5173` (or the port configured in your Vite setup).
+By default, Vite will start the app at `http://localhost:8080` (or the port configured in your Vite setup).
 
 ---
 
@@ -271,5 +276,6 @@ This project is open source under the **[MIT License](https://choosealicense.com
 - Students, parents, and educators who prioritize mental wellness in academic spaces.
 - Supabase for the Postgres + Auth + Storage platform that powers the backend.
 - The React, Vite, Tailwind, and shadcn/ui communities for excellent tooling and documentation.
+- [Lovable](https://lovable.dev) was used to accelerate parts of the frontend and backend development workflow. 
 
 Let's build calmer, kinder learning spaces together. 🌱
