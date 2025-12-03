@@ -170,19 +170,18 @@ Supabase automatically exposes type-safe APIs over these tables that can be cons
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/happy-space-world.git
-cd happy-space-world
+git clone https://github.com/MK-PANKAJ/project-page-master.git
+cd main
 ```
 
-> Replace `your-username` and repo URL with your own GitHub repository.
 
 ### 2. Install Dependencies
 
 ```bash
 npm install
-# or
+ or
 yarn install
-# or
+ or
 pnpm install
 ```
 
@@ -263,8 +262,7 @@ Contributions that improve stability, accessibility, or student experience are w
 
 ## 📄 License
 
-This project is open source under the **MIT License**.  
-See the `LICENSE` file in the repository for full terms.
+This project is open source under the **[MIT License](https://choosealicense.com/licenses/mit/)**.
 
 ---
 
