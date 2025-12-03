@@ -3,8 +3,13 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+// Check if we are building for GitHub Pages specifically
+// We will set this environment variable in the GitHub Actions workflow or package.json script
+const isGitHubPages = process.env.VITE_DEPLOY_TARGET === 'github-pages';
+
 export default defineConfig(({ mode }) => ({
-  base: "/project-page-master/", 
+  // Use repo name for GitHub Pages, root for Vercel/Local
+  base: isGitHubPages ? "/project-page-master/" : "/",
 
   server: {
     host: "::",
