@@ -9,7 +9,7 @@ This repository contains the **frontend application** built with React and Vite,
 ---
 
 
-## <img width="27" height="27" alt="image" src="https://github.com/user-attachments/assets/bf727e43-8ac5-4cfa-8e85-a28920bff8e1" />  Built with React, Supabase, and tooling such as [Lovable](https://lovable.dev) to speed up development.
+### <img width="27" height="27" alt="image" src="https://github.com/user-attachments/assets/bf727e43-8ac5-4cfa-8e85-a28920bff8e1" />  Built with React, Supabase, and tooling such as [Lovable](https://lovable.dev) to speed up development.
 
 ---
 ## ✨ Key Highlights
