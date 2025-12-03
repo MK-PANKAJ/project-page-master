@@ -1,73 +1,101 @@
-# Welcome to your Lovable project
+🌍 Happy Space World
+Cultivating Calm, Confidence, and Connection for Students
+Happy Space World is a full-stack mental wellness platform designed for students (Classes 8-12) and schools. It integrates expert counseling based on the "Stop, Look, Go" mindfulness model with the healing power of pet therapy.
+This repository contains the frontend application built with React and Vite, integrated with a Supabase backend for content management, authentication, and data storage.
+🚀 Features
+🌟 Public Platform
+Tailored Landing Pages: Dedicated sections for Students and Schools outlining programs and benefits.
+Resource Library: A filterable repository of worksheets, guides, and videos for Students, Parents, and Educators.
+Dynamic Blog: Content management for wellness articles with SEO optimization.
+Gallery & Testimonials: Visual showcases of pet therapy sessions and success stories.
+Interactive Forms:
+Booking System: Request forms for 1-on-1 counseling or school workshops.
+Newsletter: Subscription system with spam protection (honeypot).
+🛡️ Admin Dashboard (Protected)
+A comprehensive CMS located at /admin for managing all site content:
+Dashboard Modules:
+Contacts & Bookings: View and manage incoming inquiries.
+Content Management: CRUD operations for Blogs, Testimonials, Gallery Items, and Plans.
+Resource Center: Upload PDF/Doc files and link Google Drive resources.
+SEO Manager: Configure Meta Titles, Descriptions, and OG Images for every page path.
+Newsletter: View subscribers and export lists to CSV.
+Announcements: Toggle site-wide banner alerts.
+Authentication: Secure OTP-based login for administrators via Supabase Edge Functions.
+🛠️ Tech Stack
+Frontend
+Framework: React + TypeScript
+Build Tool: Vite
+Styling: Tailwind CSS
+UI Components: shadcn/ui (Radix UI + Tailwind)
+State Management: TanStack Query (React Query)
+Routing: React Router
+SEO: React Helmet Async
+Backend (Supabase)
+Database: PostgreSQL
+Authentication: Supabase Auth (Passwordless/OTP)
+Storage: Buckets for Blog, Gallery, and Testimonial images.
+Edge Functions:
+send-notification-email: Email triggers for new bookings via Resend.
+send-admin-otp: Custom admin authentication logic.
+subscribe-newsletter: Handling subscriptions.
+🗄️ Database Schema
+The application uses the following Supabase tables:
+blog_posts: Content, tags, and SEO metadata for articles.
+gallery_items: Images and captions for the gallery page.
+resources: Downloadable files and links categorized by audience.
+testimonials: Client feedback and ratings.
+plans: Pricing packages for students and schools.
+contact_submissions: General contact form data.
+booking_requests: Specific session requests.
+newsletter_subscriptions: Email list.
+page_metadata: Dynamic SEO settings per route.
+announcements: Site-wide alert banners.
+⚙️ Getting Started
+Prerequisites
+Node.js (v18+)
+npm or yarn
+A Supabase project
+Environment Variables
+Create a .env file in the root directory:
+VITE_SUPABASE_PROJECT_ID="your_project_id"
+VITE_SUPABASE_URL="[https://your-project-id.supabase.co](https://your-project-id.supabase.co)"
+VITE_SUPABASE_PUBLISHABLE_KEY="your_anon_key"
 
-## Project info
 
-**URL**: https://lovable.dev/projects/ebaa830d-b1c9-4a1f-9061-27e0651ce5b1
+Installation
+Clone the repository:
+git clone [https://github.com/your-repo/happy-space-world.git](https://github.com/your-repo/happy-space-world.git)
+cd happy-space-world
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+Install dependencies:
+npm install
+# or
+bun install
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ebaa830d-b1c9-4a1f-9061-27e0651ce5b1) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Run Development Server:
 npm run dev
-```
 
-**Edit a file directly in GitHub**
+The app will start at http://localhost:8080.
+🏗️ Project Structure
+src/
+├── assets/             # Static images
+├── components/
+│   ├── admin/          # Dashboard specific components (Tabs, Uploaders)
+│   ├── layout/         # Header, Footer
+│   ├── ui/             # shadcn/ui reusable components
+│   └── ...
+├── hooks/              # Custom hooks (useToast, useAutoSignOut)
+├── integrations/       # Supabase client setup
+├── lib/                # Utilities (cn, image optimization)
+├── pages/              # Route components (Home, Admin, Blog, etc.)
+└── ...
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
 
-**Use GitHub Codespaces**
+📦 Deployment
+The project is configured for deployment on static hosting services like GitHub Pages or Vercel.
+Build for Production:
+npm run build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/ebaa830d-b1c9-4a1f-9061-27e0651ce5b1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
