@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
-import { Calendar, Tag, ArrowLeft } from "lucide-react";
+// Added social icons
+import { Calendar, Tag, ArrowLeft, Share2, Facebook, Twitter, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BlogPost {
@@ -132,10 +133,46 @@ export default function BlogPost() {
             >
               {post.content}
             </div>
+
+            {/* Social Sharing Section */}
+            <div className="mt-12 pt-8 border-t">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Share2 className="h-5 w-5" />
+                  <span className="font-medium">Share this post:</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
+                    title="Share on Facebook"
+                  >
+                    <Facebook className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`, '_blank')}
+                    title="Share on Twitter"
+                  >
+                    <Twitter className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank')}
+                    title="Share on LinkedIn"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
           </article>
         </main>
         <Footer />
       </div>
     </>
   );
-}
+                }
