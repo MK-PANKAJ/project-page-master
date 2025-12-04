@@ -8,8 +8,8 @@ import { componentTagger } from "lovable-tagger";
 const isGitHubPages = process.env.VITE_DEPLOY_TARGET === 'github-pages';
 
 export default defineConfig(({ mode }) => ({
-  // Use repo name for GitHub Pages, root for Vercel/Local
-  base: isGitHubPages ? "/project-page-master/" : "/",
+  // CHANGE THIS LINE: Use "./" to make paths relative
+  base: "./", 
 
   server: {
     host: "::",
